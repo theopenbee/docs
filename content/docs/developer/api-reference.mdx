@@ -1,0 +1,155 @@
+---
+title: API Reference
+description: OpenBee REST API endpoints
+---
+
+All endpoints are served from `http://{host}:{port}/api/`.
+
+## Workers
+
+### Create Worker
+
+`POST /api/workers`
+
+```json
+{
+  "name": "Assistant",
+  "description": "General purpose assistant",
+  "memory": "You are a helpful assistant."
+}
+```
+
+**Response:** `201 Created`
+
+```json
+{
+  "id": "uuid",
+  "name": "Assistant",
+  "description": "General purpose assistant",
+  "memory": "You are a helpful assistant.",
+  "work_dir": "/home/user/.openbee/worker/uuid",
+  "status": "idle",
+  "created_at": 1711180800000,
+  "updated_at": 1711180800000
+}
+```
+
+### List Workers
+
+`GET /api/workers`
+
+**Response:** `200 OK` — Array of worker objects.
+
+### Get Worker
+
+`GET /api/workers/:id`
+
+**Response:** `200 OK` — Single worker object.
+
+### Update Worker
+
+`PUT /api/workers/:id`
+
+```json
+{
+  "name": "Updated Name",
+  "description": "Updated description",
+  "memory": "Updated memory"
+}
+```
+
+All fields are optional (patch semantics).
+
+**Response:** `200 OK` — Updated worker object.
+
+### Delete Worker
+
+`DELETE /api/workers/:id`
+
+**Response:** `200 OK`
+
+## Executions
+
+### List All Executions
+
+`GET /api/executions`
+
+**Response:** `200 OK` — Array of execution objects.
+
+### Get Execution
+
+`GET /api/executions/:id`
+
+**Response:** `200 OK` — Single execution object.
+
+### Stream Execution Logs
+
+`GET /api/executions/:id/logs`
+
+**Response:** Server-Sent Events (SSE) stream of log lines. For completed executions, returns the full log file content.
+
+### List Worker Executions
+
+`GET /api/workers/:id/executions`
+
+**Response:** `200 OK` — Array of execution objects for the specified worker.
+
+### List Session Executions
+
+`GET /api/sessions/:sessionId/executions`
+
+**Response:** `200 OK` — Array of execution objects for the specified session.
+
+## Local Chat
+
+### Start Session
+
+`POST /api/local/sessions`
+
+```json
+{
+  "worker_id": "uuid"
+}
+```
+
+**Response:** `201 Created`
+
+```json
+{
+  "id": "session-uuid"
+}
+```
+
+### Send Message
+
+`POST /api/local/sessions/:id/messages`
+
+```json
+{
+  "content": "Hello, what can you do?"
+}
+```
+
+**Response:** `200 OK`
+
+### Stream Replies
+
+`GET /api/local/sessions/:id/stream`
+
+**Response:** Server-Sent Events (SSE) stream of worker replies.
+
+## Internal
+
+### Set Log Level
+
+`PUT /internal/log/level`
+
+```json
+{
+  "level": "debug"
+}
+```
+
+Valid levels: `debug`, `info`, `warn`, `error`.
+
+**Response:** `200 OK`
