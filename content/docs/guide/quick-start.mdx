@@ -1,0 +1,74 @@
+---
+title: Quick Start
+description: Get OpenBee running in minutes
+---
+
+## 1. Generate Configuration
+
+Run the interactive configuration wizard:
+
+```bash
+openbee config
+```
+
+This walks you through setting up:
+- Server host and port
+- Database path
+- Claude CLI path and timeout
+- MCP API key (auto-generated or manual)
+- Platform credentials (Feishu, DingTalk, WeCom, Telegram)
+
+The configuration is saved to `config.yaml` by default. You can specify a different output path:
+
+```bash
+openbee config -o /path/to/config.yaml
+```
+
+## 2. Start the Server
+
+```bash
+openbee server
+```
+
+Or run as a background daemon:
+
+```bash
+openbee server -d
+```
+
+The web console is available at `http://localhost:8080` (or your configured host:port).
+
+## 3. Create a Worker
+
+Open the web console and create your first worker:
+
+1. Navigate to the **Workers** page
+2. Click **Create Worker**
+3. Set a name (e.g., "Assistant") and description
+4. Optionally add initial memory to define the worker's personality
+
+Alternatively, use the local chat to interact immediately:
+
+```bash
+curl -X POST http://localhost:8080/api/local/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"worker_id": "<worker-id>"}'
+```
+
+## 4. Send a Message
+
+If you have a platform configured (e.g., Feishu), send a message to your bot in the IM app. OpenBee will route it to the appropriate worker.
+
+For local testing, use the local chat API:
+
+```bash
+curl -X POST http://localhost:8080/api/local/sessions/<session-id>/messages \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Hello, what can you do?"}'
+```
+
+## Next Steps
+
+- [Configuration Reference](/docs/guide/configuration) — Full config.yaml documentation
+- [Platform Setup](/docs/guide/platforms) — Connect your IM platform
+- [Workers](/docs/guide/workers) — Create and manage AI workers

@@ -1,0 +1,115 @@
+---
+title: Configuration
+description: Complete config.yaml reference
+---
+
+OpenBee uses a YAML configuration file. Generate one interactively with `openbee config`, or create it manually.
+
+## Full Example
+
+```yaml
+server:
+  port: 8080
+  host: localhost
+  debug: false
+
+database:
+  path: ./data/openbee.db
+
+bee:
+  claude:
+    path: claude
+    timeout: 45m
+  mcp:
+    api_key: "your-api-key"
+  platforms:
+    feishu:
+      enabled: false
+      app_id: ""
+      app_secret: ""
+      max_media_size: 104857600
+    dingtalk:
+      enabled: false
+      client_id: ""
+      client_secret: ""
+    wecom:
+      enabled: false
+      bot_id: ""
+      secret: ""
+    telegram:
+      enabled: false
+      token: ""
+      max_media_size: 52428800
+  feeder:
+    timeout: 10m
+  media:
+    ffprobe_path: ffprobe
+    ffmpeg_path: ffmpeg
+  message_debounce: 3s
+```
+
+## Server
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `server.port` | integer | `8080` | HTTP server port |
+| `server.host` | string | `localhost` | Server bind address |
+| `server.debug` | boolean | `false` | Enable debug mode (verbose logging) |
+
+## Database
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `database.path` | string | `./data/openbee.db` | SQLite database file path |
+
+## Claude
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.claude.path` | string | `claude` | Path to Claude CLI binary |
+| `bee.claude.timeout` | duration | `45m` | Maximum execution time per Claude invocation |
+
+## MCP
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.mcp.api_key` | string | — | API key for MCP server authentication. Required for MCP tools to function. |
+
+## Platforms
+
+See [Platform Setup](/docs/guide/platforms) for detailed configuration of each platform.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.platforms.feishu.enabled` | boolean | `false` | Enable Feishu/Lark integration |
+| `bee.platforms.feishu.app_id` | string | — | Feishu app ID |
+| `bee.platforms.feishu.app_secret` | string | — | Feishu app secret |
+| `bee.platforms.feishu.max_media_size` | integer | `104857600` | Max media file size (100MB) |
+| `bee.platforms.dingtalk.enabled` | boolean | `false` | Enable DingTalk integration |
+| `bee.platforms.dingtalk.client_id` | string | — | DingTalk client ID |
+| `bee.platforms.dingtalk.client_secret` | string | — | DingTalk client secret |
+| `bee.platforms.wecom.enabled` | boolean | `false` | Enable WeCom integration |
+| `bee.platforms.wecom.bot_id` | string | — | WeCom bot ID |
+| `bee.platforms.wecom.secret` | string | — | WeCom bot secret |
+| `bee.platforms.telegram.enabled` | boolean | `false` | Enable Telegram integration |
+| `bee.platforms.telegram.token` | string | — | Telegram bot token |
+| `bee.platforms.telegram.max_media_size` | integer | `52428800` | Max media file size (50MB) |
+
+## Feeder
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.feeder.timeout` | duration | `10m` | Bee (coordinator) feeding timeout |
+
+## Media
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.media.ffprobe_path` | string | `ffprobe` | Path to FFprobe binary |
+| `bee.media.ffmpeg_path` | string | `ffmpeg` | Path to FFmpeg binary |
+
+## Message Processing
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bee.message_debounce` | duration | `3s` | Time window to aggregate multiple rapid messages into one |
