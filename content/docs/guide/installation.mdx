@@ -1,0 +1,65 @@
+---
+title: Installation
+description: Install OpenBee on your system
+---
+
+## Prerequisites
+
+- **Claude CLI** — OpenBee requires Claude Code CLI to be installed. See [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code) for installation.
+- **Go 1.25+** (only if building from source)
+- **Node.js 18+** (only if building from source)
+- **FFmpeg/FFprobe** (optional, for media file processing)
+
+## Install via npm
+
+```bash
+npm install -g openbee
+```
+
+## Install via Script
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/theopenbee/openbee/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/theopenbee/openbee/main/install.ps1 | iex
+```
+
+## Install via Package Manager
+
+**macOS (Homebrew):**
+
+```bash
+brew install theopenbee/tap/openbee
+```
+
+**Windows (Scoop):**
+
+```bash
+scoop bucket add theopenbee https://github.com/theopenbee/scoop-bucket.git
+scoop install openbee
+```
+
+## Build from Source
+
+```bash
+git clone https://github.com/theopenbee/openbee.git
+cd openbee
+make web    # Build frontend assets
+make build  # Build binary
+```
+
+The binary will be at `./bin/openbee`.
+
+## Verify Installation
+
+```bash
+openbee --version
+```
+
+You should see the version number, commit hash, and build date.
