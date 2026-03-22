@@ -1,0 +1,111 @@
+---
+title: Tasks
+description: Task types, scheduling, and lifecycle
+---
+
+Tasks are units of work assigned to workers. OpenBee supports three task types with different execution patterns.
+
+## Task Types
+
+### Immediate Tasks
+
+Execute as soon as the worker is available. This is the default when a user sends a message.
+
+### Countdown Tasks
+
+Execute at a specific time. Useful for reminders and scheduled actions.
+
+```json
+{
+  "name": "create_task",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "instruction": "Send the weekly report",
+    "type": "countdown",
+    "scheduled_at": 1711180800000
+  }
+}
+```
+
+The `scheduled_at` field is a Unix timestamp in milliseconds.
+
+### Scheduled (Cron) Tasks
+
+Execute on a recurring schedule using cron expressions.
+
+```json
+{
+  "name": "create_task",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "instruction": "Check for new issues and summarize",
+    "type": "scheduled",
+    "cron_expr": "0 9 * * 1-5"
+  }
+}
+```
+
+This runs every weekday at 9:00 AM. Uses standard 5-field cron format: `minute hour day-of-month month day-of-week`.
+
+## Task Lifecycle
+
+```
+pending → running → completed
+                  → failed
+pending → cancelled
+```
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Task is queued, waiting to be picked up |
+| `running` | Task is currently being executed by a worker |
+| `completed` | Task finished successfully |
+| `failed` | Task encountered an error |
+| `cancelled` | Task was cancelled before execution |
+
+## Managing Tasks
+
+### List Tasks
+
+Filter by session, worker, status, or type:
+
+```json
+{
+  "name": "list_tasks",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "status": "pending"
+  }
+}
+```
+
+### Cancel a Task
+
+Cancel a pending or scheduled task:
+
+```json
+{
+  "name": "cancel_task",
+  "arguments": {
+    "task_id": "<task-id>"
+  }
+}
+```
+
+### Mark a Task Complete
+
+```json
+{
+  "name": "mark_task_complete",
+  "arguments": {
+    "task_id": "<task-id>"
+  }
+}
+```
+
+## Task Dispatcher
+
+The task dispatcher coordinates worker execution queues. It ensures:
+- One task runs per worker at a time
+- Tasks are processed in order
+- Failed tasks are tracked with execution logs

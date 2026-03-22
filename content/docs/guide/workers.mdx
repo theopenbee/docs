@@ -1,0 +1,90 @@
+---
+title: Workers
+description: Create and manage AI workers
+---
+
+Workers are Claude AI agents that execute tasks. Each worker has its own identity, persistent memory, and working directory.
+
+## Worker Properties
+
+| Property | Description |
+|----------|-------------|
+| **Name** | Display name for the worker |
+| **Description** | What the worker does — used for task routing |
+| **Memory** | Persistent context written to the worker's CLAUDE.md file |
+| **Work Directory** | Isolated filesystem path (`~/.openbee/worker/{id}`) |
+| **Status** | `idle`, `working`, or `error` |
+
+## Creating a Worker
+
+### Via Web Console
+
+1. Open the web console at `http://localhost:8080`
+2. Go to **Workers** → **Create Worker**
+3. Fill in the name, description, and optional memory
+
+### Via API
+
+```bash
+curl -X POST http://localhost:8080/api/workers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Research Assistant",
+    "description": "Helps with research tasks and summarization",
+    "memory": "You are a research assistant. Be thorough and cite sources."
+  }'
+```
+
+### Via MCP Tool
+
+Workers can create other workers using the `create_worker` MCP tool:
+
+```json
+{
+  "name": "create_worker",
+  "arguments": {
+    "name": "Research Assistant",
+    "description": "Helps with research tasks",
+    "memory": "You are a research assistant."
+  }
+}
+```
+
+## Managing Workers
+
+### Update a Worker
+
+```bash
+curl -X PUT http://localhost:8080/api/workers/<worker-id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Name",
+    "memory": "Updated memory content"
+  }'
+```
+
+### Delete a Worker
+
+```bash
+curl -X DELETE http://localhost:8080/api/workers/<worker-id>
+```
+
+### List Workers
+
+```bash
+curl http://localhost:8080/api/workers
+```
+
+## CLAUDE.md Customization
+
+Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's memory field, but you can also edit it directly.
+
+The working directory is located at `~/.openbee/worker/{worker-id}/`.
+
+## Worker Status
+
+| Status | Meaning |
+|--------|---------|
+| `idle` | Worker is available to accept tasks |
+| `working` | Worker is currently executing a task |
+| `error` | Worker encountered an error during execution |
