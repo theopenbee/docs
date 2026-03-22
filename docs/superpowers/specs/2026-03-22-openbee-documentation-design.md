@@ -10,7 +10,55 @@ Comprehensive bilingual (English/Chinese) documentation for the OpenBee project,
 - `content/docs/en/` — English content
 - `content/docs/cn/` — Chinese content
 
-Requires updating `source.config.ts` to use directory-based content resolution. Existing `i18n.ts` and `layout.shared.tsx` configurations remain unchanged.
+### source.config.ts Changes
+
+```ts
+import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+
+export const docs = defineDocs({
+  dir: [
+    'content/docs/en',
+    'content/docs/cn',
+  ],
+  docs: {
+    schema: pageSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
+export default defineConfig({
+  mdxOptions: {},
+});
+```
+
+Note: Fumadocs resolves locale from directory structure when multiple dirs are provided. The `i18n` config in `source.ts` maps directory names to locale codes. If multi-dir does not work as expected with Fumadocs' `defineDocs`, fall back to the dot parser approach (e.g., `index.cn.mdx`) with a single `dir: 'content/docs'`. Test during implementation.
+
+### source.ts
+
+No changes needed — the existing loader already passes `i18n` config. The loader resolves locale from file paths automatically.
+
+### layout.shared.tsx Changes
+
+Update placeholder values:
+
+```ts
+export const gitConfig = {
+  user: 'theopenbee',
+  repo: 'openbee',
+  branch: 'main',
+};
+
+// In baseOptions:
+nav: {
+  title: 'OpenBee',
+},
+```
 
 ## Content Structure
 
@@ -49,6 +97,86 @@ content/docs/
 │   └── (mirrors en/ structure, Chinese content)
 ```
 
+## meta.json Files
+
+### Top-level: `content/docs/en/meta.json`
+
+```json
+{
+  "title": "OpenBee",
+  "pages": ["index", "guide", "developer"]
+}
+```
+
+### User Guide: `content/docs/en/guide/meta.json`
+
+```json
+{
+  "title": "User Guide",
+  "pages": [
+    "index",
+    "installation",
+    "quick-start",
+    "configuration",
+    "platforms",
+    "workers",
+    "tasks",
+    "memory",
+    "web-console",
+    "mcp-tools"
+  ]
+}
+```
+
+### Platforms: `content/docs/en/guide/platforms/meta.json`
+
+```json
+{
+  "title": "Platforms",
+  "pages": ["index", "feishu", "dingtalk", "wecom", "telegram"]
+}
+```
+
+### Developer Guide: `content/docs/en/developer/meta.json`
+
+```json
+{
+  "title": "Developer Guide",
+  "pages": [
+    "index",
+    "architecture",
+    "api-reference",
+    "mcp-reference",
+    "data-models",
+    "contributing"
+  ]
+}
+```
+
+### Chinese meta.json files
+
+Mirror the English structure with translated titles:
+
+- Top-level: `"title": "OpenBee"`
+- User Guide: `"title": "用户指南"`
+- Platforms: `"title": "平台接入"`
+- Developer Guide: `"title": "开发者指南"`
+
+Page ordering remains the same.
+
+## MDX Frontmatter
+
+All pages use this frontmatter format:
+
+```yaml
+---
+title: Page Title
+description: One-line page description
+---
+```
+
+The `title` and `description` fields are required (enforced by `pageSchema`). Optional fields: `icon` (Lucide icon name).
+
 ## Page Content Outline
 
 ### User Guide
@@ -81,34 +209,46 @@ content/docs/
 
 ## Home Page
 
-Replace current placeholder with a proper landing page:
-- OpenBee tagline and brief description
-- "Get Started" button → User Guide
-- "Developer Docs" button → Developer Guide
-- Key feature highlights (multi-IM, AI workers, task scheduling, MCP tools)
+Replace `src/app/[lang]/(home)/page.tsx`. The component must accept `params` to extract `lang` for bilingual content.
+
+Structure:
+- Hero section: OpenBee tagline + brief description (translated per locale)
+- Two CTA buttons: "Get Started" → `/${lang}/docs/guide`, "Developer Docs" → `/${lang}/docs/developer`
+- Feature grid (4 items): Multi-IM Support, AI Workers, Task Scheduling, MCP Tools — each with icon + short description
+- Use Tailwind CSS for styling, consistent with existing Fumadocs theme
+
+Bilingual content handled via a simple translations object in the component (no need for a full i18n library for one page).
 
 ## Navigation
 
-**Sidebar** (via meta.json):
+**Sidebar** (controlled by meta.json files above):
 - Top level: Introduction, User Guide, Developer Guide
 - User Guide: Installation → Quick Start → Configuration → Platforms (nested) → Workers → Tasks → Memory → Web Console → MCP Tools
 - Developer Guide: Architecture → API Reference → MCP Reference → Data Models → Contributing
 
-**Nav bar**: Site title "OpenBee", GitHub link, language switcher (English/中文)
+**Nav bar**: Site title "OpenBee", GitHub link (`https://github.com/theopenbee/openbee`), language switcher (English/中文)
 
-## Configuration Changes
+## Locale Fallback Behavior
 
-### source.config.ts
+Fumadocs falls back to `defaultLanguage` (`en`) when a page does not exist in the requested locale. This means Chinese pages can be added incrementally — missing Chinese pages will show English content automatically.
 
-Update to support directory-based i18n content resolution, pointing to `content/docs/en` and `content/docs/cn` directories.
+## Search
 
-### source.ts
+The existing search API at `src/app/api/search/route.ts` uses `source` from `source.ts`, which already has i18n configured. No changes needed — Fumadocs indexes content per locale automatically.
 
-Update loader to work with directory-based content while maintaining existing i18n integration.
+## Existing Routes
 
-### Home page
+- **OG image generation** (`/og/docs/[...slug]/`): No changes needed, works with slug-based resolution.
+- **LLM text routes** (`/llms.txt`, `/llms-full.txt`, `/llms.mdx`): No changes needed, these read from the same source API.
 
-Replace `src/app/[lang]/(home)/page.tsx` with landing page featuring project description and navigation CTAs.
+## Implementation Phases
+
+1. **Infrastructure**: Update `source.config.ts`, `layout.shared.tsx`, create directory structure, write all `meta.json` files, update home page
+2. **Core User Guide (EN)**: Installation, Quick Start, Configuration, Workers, Tasks
+3. **Platform Guides (EN)**: Platforms overview, Feishu, DingTalk, WeCom, Telegram
+4. **Additional User Guide (EN)**: Memory, Web Console, MCP Tools
+5. **Developer Guide (EN)**: Architecture, API Reference, MCP Reference, Data Models, Contributing
+6. **Chinese Translation**: Translate all content from EN to CN, create CN meta.json files
 
 ## Content Principles
 
