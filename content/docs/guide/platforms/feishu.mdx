@@ -1,0 +1,46 @@
+---
+title: Feishu (Lark)
+description: Set up Feishu/Lark integration
+---
+
+## Create a Feishu App
+
+1. Go to [Feishu Open Platform](https://open.feishu.cn/)
+2. Create a new custom app
+3. Note the **App ID** and **App Secret** from the app credentials page
+
+## Configure Permissions
+
+Add the following permissions to your app:
+- `im:message` — Send and receive messages
+- `im:message.group_at_msg` — Receive @mentions in groups
+- `im:resource` — Access media resources
+
+## Set Up Event Subscription
+
+1. In your app settings, go to **Event Subscriptions**
+2. Configure the request URL to point to your OpenBee server
+3. Subscribe to the `im.message.receive_v1` event
+
+## Configure OpenBee
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    feishu:
+      enabled: true
+      app_id: "your-app-id"
+      app_secret: "your-app-secret"
+      max_media_size: 104857600  # 100MB, optional
+```
+
+## Publish the App
+
+1. Submit your app for review in the Feishu Open Platform
+2. Once approved, users can find and message your bot
+
+## Media Support
+
+Feishu supports sending and receiving media files (images, documents, audio, video) up to the configured `max_media_size` (default 100MB). OpenBee uses FFprobe/FFmpeg for media processing when available.

@@ -1,0 +1,31 @@
+---
+title: Telegram
+description: Set up Telegram bot integration
+---
+
+## Create a Telegram Bot
+
+1. Open Telegram and message [@BotFather](https://t.me/BotFather)
+2. Send `/newbot` and follow the prompts
+3. Note the **bot token** provided by BotFather
+
+## Configure OpenBee
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    telegram:
+      enabled: true
+      token: "your-bot-token"
+      max_media_size: 52428800  # 50MB, optional
+```
+
+## Deploy
+
+Restart OpenBee. The Telegram bot will start polling for messages automatically. Users can find your bot by its username and start chatting.
+
+## Media Support
+
+Telegram supports media files up to the configured `max_media_size` (default 50MB). This is limited by Telegram's Bot API file size restrictions.

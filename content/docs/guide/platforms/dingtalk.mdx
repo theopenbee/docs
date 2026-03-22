@@ -1,0 +1,32 @@
+---
+title: DingTalk
+description: Set up DingTalk integration
+---
+
+## Create a DingTalk Robot
+
+1. Go to [DingTalk Open Platform](https://open-dev.dingtalk.com/)
+2. Create a new application
+3. Add a robot capability to your application
+4. Note the **Client ID** and **Client Secret**
+
+## Configure Streaming
+
+DingTalk uses a streaming SDK connection — no public webhook URL is needed. The SDK maintains a persistent connection to DingTalk's servers.
+
+## Configure OpenBee
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    dingtalk:
+      enabled: true
+      client_id: "your-client-id"
+      client_secret: "your-client-secret"
+```
+
+## Deploy
+
+Once configured, restart OpenBee. The DingTalk streaming connection will be established automatically. Users can find and message your bot in DingTalk.

@@ -1,0 +1,36 @@
+---
+title: WeCom
+description: Set up WeCom (WeChat Work) integration
+---
+
+## Create a WeCom Bot
+
+1. Go to [WeCom Admin Console](https://work.weixin.qq.com/)
+2. Create a new application or bot
+3. Note the **Bot ID** and **Secret**
+
+## WebSocket Connection
+
+WeCom uses a WebSocket connection for real-time message delivery. OpenBee automatically handles:
+- Connection establishment
+- Heartbeat keep-alive
+- Automatic reconnection on disconnect
+
+No public URL or webhook setup is required.
+
+## Configure OpenBee
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    wecom:
+      enabled: true
+      bot_id: "your-bot-id"
+      secret: "your-secret"
+```
+
+## Deploy
+
+Restart OpenBee after configuration. The WebSocket connection to WeCom will be established automatically.

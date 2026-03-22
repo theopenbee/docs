@@ -1,0 +1,32 @@
+---
+title: Platforms
+description: Connect OpenBee to your IM platform
+---
+
+OpenBee communicates through instant messaging platforms. Each platform has its own adapter that handles message receiving and sending.
+
+## Supported Platforms
+
+| Platform | Protocol | Key Feature |
+|----------|----------|-------------|
+| [Feishu (Lark)](/docs/guide/platforms/feishu) | HTTP webhook + SDK | Full-featured, supports rich messages and media |
+| [DingTalk](/docs/guide/platforms/dingtalk) | Streaming SDK | Real-time streaming connection |
+| [WeCom](/docs/guide/platforms/wecom) | WebSocket | Persistent WebSocket connection with auto-reconnect |
+| [Telegram](/docs/guide/platforms/telegram) | Bot API (polling) | Simple setup, global availability |
+
+## How It Works
+
+1. A user sends a message in the IM platform
+2. The platform adapter receives the message
+3. OpenBee's message ingestion gateway debounces rapid messages (configurable, default 3s)
+4. The bee (coordinator) routes the message to the appropriate worker
+5. The worker executes the task and sends a reply through the same platform
+
+## Choosing a Platform
+
+- **Feishu** — Best for teams already using Lark/Feishu. Rich media support.
+- **DingTalk** — Best for teams using DingTalk. Streaming connection means no webhook setup.
+- **WeCom** — Best for teams using WeChat Work. WebSocket-based, no public URL needed.
+- **Telegram** — Best for personal use or global teams. Easiest to set up.
+
+You can enable multiple platforms simultaneously.
