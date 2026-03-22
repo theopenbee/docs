@@ -1,0 +1,90 @@
+---
+title: 工作者
+description: 创建和管理 AI 工作者
+---
+
+工作者是执行任务的 Claude AI 代理。每个工作者拥有自己的身份、持久化记忆和工作目录。
+
+## 工作者属性
+
+| 属性 | 描述 |
+|------|------|
+| **名称** | 工作者的显示名称 |
+| **描述** | 工作者的职责 — 用于任务路由 |
+| **记忆** | 写入工作者 CLAUDE.md 文件的持久化上下文 |
+| **工作目录** | 隔离的文件系统路径（`~/.openbee/worker/{id}`） |
+| **状态** | `idle`、`working` 或 `error` |
+
+## 创建工作者
+
+### 通过 Web 控制台
+
+1. 打开 Web 控制台 `http://localhost:8080`
+2. 进入**工作者** → **创建工作者**
+3. 填写名称、描述和可选的记忆
+
+### 通过 API
+
+```bash
+curl -X POST http://localhost:8080/api/workers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Research Assistant",
+    "description": "Helps with research tasks and summarization",
+    "memory": "You are a research assistant. Be thorough and cite sources."
+  }'
+```
+
+### 通过 MCP 工具
+
+工作者可以使用 `create_worker` MCP 工具创建其他工作者：
+
+```json
+{
+  "name": "create_worker",
+  "arguments": {
+    "name": "Research Assistant",
+    "description": "Helps with research tasks",
+    "memory": "You are a research assistant."
+  }
+}
+```
+
+## 管理工作者
+
+### 更新工作者
+
+```bash
+curl -X PUT http://localhost:8080/api/workers/<worker-id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Name",
+    "memory": "Updated memory content"
+  }'
+```
+
+### 删除工作者
+
+```bash
+curl -X DELETE http://localhost:8080/api/workers/<worker-id>
+```
+
+### 列出工作者
+
+```bash
+curl http://localhost:8080/api/workers
+```
+
+## CLAUDE.md 自定义
+
+每个工作者的工作目录中都有一个 `CLAUDE.md` 文件，用于定义工作者的系统提示词。该文件由 OpenBee 根据工作者的记忆字段自动管理，但你也可以直接编辑。
+
+工作目录位于 `~/.openbee/worker/{worker-id}/`。
+
+## 工作者状态
+
+| 状态 | 含义 |
+|------|------|
+| `idle` | 工作者空闲，可以接受任务 |
+| `working` | 工作者正在执行任务 |
+| `error` | 工作者在执行过程中遇到错误 |

@@ -1,0 +1,65 @@
+---
+title: 安装
+description: 在你的系统上安装 OpenBee
+---
+
+## 前置条件
+
+- **Claude CLI** — OpenBee 需要安装 Claude Code CLI。请参阅 [Claude Code 文档](https://docs.anthropic.com/en/docs/claude-code)了解安装方法。
+- **Go 1.25+**（仅从源码构建时需要）
+- **Node.js 18+**（仅从源码构建时需要）
+- **FFmpeg/FFprobe**（可选，用于媒体文件处理）
+
+## 通过 npm 安装
+
+```bash
+npm install -g openbee
+```
+
+## 通过脚本安装
+
+**macOS / Linux：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/theopenbee/openbee/main/install.sh | bash
+```
+
+**Windows (PowerShell)：**
+
+```powershell
+irm https://raw.githubusercontent.com/theopenbee/openbee/main/install.ps1 | iex
+```
+
+## 通过包管理器安装
+
+**macOS (Homebrew)：**
+
+```bash
+brew install theopenbee/tap/openbee
+```
+
+**Windows (Scoop)：**
+
+```bash
+scoop bucket add theopenbee https://github.com/theopenbee/scoop-bucket.git
+scoop install openbee
+```
+
+## 从源码构建
+
+```bash
+git clone https://github.com/theopenbee/openbee.git
+cd openbee
+make web    # 构建前端资源
+make build  # 构建二进制文件
+```
+
+构建产物位于 `./bin/openbee`。
+
+## 验证安装
+
+```bash
+openbee --version
+```
+
+你应该能看到版本号、提交哈希和构建日期。

@@ -1,0 +1,74 @@
+---
+title: 快速开始
+description: 几分钟内启动并运行 OpenBee
+---
+
+## 1. 生成配置
+
+运行交互式配置向导：
+
+```bash
+openbee config
+```
+
+向导会引导你完成以下设置：
+- 服务器主机和端口
+- 数据库路径
+- Claude CLI 路径和超时时间
+- MCP API 密钥（自动生成或手动设置）
+- 平台凭据（飞书、钉钉、企业微信、Telegram）
+
+配置默认保存到 `config.yaml`。你可以指定不同的输出路径：
+
+```bash
+openbee config -o /path/to/config.yaml
+```
+
+## 2. 启动服务器
+
+```bash
+openbee server
+```
+
+或作为后台守护进程运行：
+
+```bash
+openbee server -d
+```
+
+Web 控制台地址为 `http://localhost:8080`（或你配置的主机:端口）。
+
+## 3. 创建工作者
+
+打开 Web 控制台，创建你的第一个工作者：
+
+1. 导航到**工作者**页面
+2. 点击**创建工作者**
+3. 设置名称（如 "Assistant"）和描述
+4. 可选添加初始记忆以定义工作者的角色
+
+或者使用本地聊天立即交互：
+
+```bash
+curl -X POST http://localhost:8080/api/local/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"worker_id": "<worker-id>"}'
+```
+
+## 4. 发送消息
+
+如果你已配置了某个平台（如飞书），在 IM 应用中向你的机器人发送消息。OpenBee 会将消息路由到相应的工作者。
+
+对于本地测试，使用本地聊天 API：
+
+```bash
+curl -X POST http://localhost:8080/api/local/sessions/<session-id>/messages \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Hello, what can you do?"}'
+```
+
+## 下一步
+
+- [配置参考](/docs/guide/configuration) — 完整的 config.yaml 文档
+- [平台接入](/docs/guide/platforms) — 连接你的 IM 平台
+- [工作者](/docs/guide/workers) — 创建和管理 AI 工作者

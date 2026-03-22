@@ -1,0 +1,115 @@
+---
+title: 配置参考
+description: 完整的 config.yaml 参考
+---
+
+OpenBee 使用 YAML 配置文件。可以通过 `openbee config` 交互式生成，也可以手动创建。
+
+## 完整示例
+
+```yaml
+server:
+  port: 8080
+  host: localhost
+  debug: false
+
+database:
+  path: ./data/openbee.db
+
+bee:
+  claude:
+    path: claude
+    timeout: 45m
+  mcp:
+    api_key: "your-api-key"
+  platforms:
+    feishu:
+      enabled: false
+      app_id: ""
+      app_secret: ""
+      max_media_size: 104857600
+    dingtalk:
+      enabled: false
+      client_id: ""
+      client_secret: ""
+    wecom:
+      enabled: false
+      bot_id: ""
+      secret: ""
+    telegram:
+      enabled: false
+      token: ""
+      max_media_size: 52428800
+  feeder:
+    timeout: 10m
+  media:
+    ffprobe_path: ffprobe
+    ffmpeg_path: ffmpeg
+  message_debounce: 3s
+```
+
+## 服务器
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `server.port` | integer | `8080` | HTTP 服务器端口 |
+| `server.host` | string | `localhost` | 服务器绑定地址 |
+| `server.debug` | boolean | `false` | 启用调试模式（详细日志） |
+
+## 数据库
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `database.path` | string | `./data/openbee.db` | SQLite 数据库文件路径 |
+
+## Claude
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.claude.path` | string | `claude` | Claude CLI 二进制文件路径 |
+| `bee.claude.timeout` | duration | `45m` | 每次 Claude 调用的最大执行时间 |
+
+## MCP
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.mcp.api_key` | string | — | MCP 服务器认证 API 密钥。MCP 工具正常运行所必需。 |
+
+## 平台
+
+详细的平台配置请参阅[平台接入](/docs/guide/platforms)。
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.platforms.feishu.enabled` | boolean | `false` | 启用飞书集成 |
+| `bee.platforms.feishu.app_id` | string | — | 飞书应用 ID |
+| `bee.platforms.feishu.app_secret` | string | — | 飞书应用密钥 |
+| `bee.platforms.feishu.max_media_size` | integer | `104857600` | 最大媒体文件大小（100MB） |
+| `bee.platforms.dingtalk.enabled` | boolean | `false` | 启用钉钉集成 |
+| `bee.platforms.dingtalk.client_id` | string | — | 钉钉客户端 ID |
+| `bee.platforms.dingtalk.client_secret` | string | — | 钉钉客户端密钥 |
+| `bee.platforms.wecom.enabled` | boolean | `false` | 启用企业微信集成 |
+| `bee.platforms.wecom.bot_id` | string | — | 企业微信机器人 ID |
+| `bee.platforms.wecom.secret` | string | — | 企业微信机器人密钥 |
+| `bee.platforms.telegram.enabled` | boolean | `false` | 启用 Telegram 集成 |
+| `bee.platforms.telegram.token` | string | — | Telegram 机器人令牌 |
+| `bee.platforms.telegram.max_media_size` | integer | `52428800` | 最大媒体文件大小（50MB） |
+
+## 投喂器
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.feeder.timeout` | duration | `10m` | 蜂巢（协调器）投喂超时时间 |
+
+## 媒体
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.media.ffprobe_path` | string | `ffprobe` | FFprobe 二进制文件路径 |
+| `bee.media.ffmpeg_path` | string | `ffmpeg` | FFmpeg 二进制文件路径 |
+
+## 消息处理
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `bee.message_debounce` | duration | `3s` | 将多条快速消息聚合为一条的时间窗口 |

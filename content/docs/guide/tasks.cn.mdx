@@ -1,0 +1,111 @@
+---
+title: 任务
+description: 任务类型、调度和生命周期
+---
+
+任务是分配给工作者的工作单元。OpenBee 支持三种具有不同执行模式的任务类型。
+
+## 任务类型
+
+### 即时任务
+
+工作者可用时立即执行。这是用户发送消息时的默认类型。
+
+### 倒计时任务
+
+在指定时间执行。适用于提醒和定时操作。
+
+```json
+{
+  "name": "create_task",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "instruction": "Send the weekly report",
+    "type": "countdown",
+    "scheduled_at": 1711180800000
+  }
+}
+```
+
+`scheduled_at` 字段是以毫秒为单位的 Unix 时间戳。
+
+### 定时（Cron）任务
+
+使用 cron 表达式按周期性计划执行。
+
+```json
+{
+  "name": "create_task",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "instruction": "Check for new issues and summarize",
+    "type": "scheduled",
+    "cron_expr": "0 9 * * 1-5"
+  }
+}
+```
+
+此任务在每个工作日上午 9:00 运行。使用标准 5 字段 cron 格式：`分钟 小时 日 月 星期`。
+
+## 任务生命周期
+
+```
+pending → running → completed
+                  → failed
+pending → cancelled
+```
+
+| 状态 | 描述 |
+|------|------|
+| `pending` | 任务已排队，等待被执行 |
+| `running` | 任务正在被工作者执行 |
+| `completed` | 任务成功完成 |
+| `failed` | 任务遇到错误 |
+| `cancelled` | 任务在执行前被取消 |
+
+## 管理任务
+
+### 列出任务
+
+按会话、工作者、状态或类型筛选：
+
+```json
+{
+  "name": "list_tasks",
+  "arguments": {
+    "worker_id": "<worker-id>",
+    "status": "pending"
+  }
+}
+```
+
+### 取消任务
+
+取消待处理或已调度的任务：
+
+```json
+{
+  "name": "cancel_task",
+  "arguments": {
+    "task_id": "<task-id>"
+  }
+}
+```
+
+### 标记任务完成
+
+```json
+{
+  "name": "mark_task_complete",
+  "arguments": {
+    "task_id": "<task-id>"
+  }
+}
+```
+
+## 任务调度器
+
+任务调度器协调工作者的执行队列，确保：
+- 每个工作者同一时间只运行一个任务
+- 任务按顺序处理
+- 失败的任务会记录执行日志
