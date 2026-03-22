@@ -1,0 +1,15 @@
+{
+  "title": "用户指南",
+  "pages": [
+    "index",
+    "installation",
+    "quick-start",
+    "configuration",
+    "platforms",
+    "workers",
+    "tasks",
+    "memory",
+    "web-console",
+    "mcp-tools"
+  ]
+}

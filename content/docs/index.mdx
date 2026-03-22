@@ -1,13 +1,39 @@
 ---
-title: Hello World
-description: Your first document
+title: Introduction
+description: OpenBee — Run Claude as your digital employees
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+OpenBee is a digital employee solution that runs Claude AI as autonomous workers. Each worker is capable of multi-step task planning and independent execution, communicating through your existing IM platforms.
 
-## What is Next?
+## Key Features
+
+- **AI Workers** — Claude AI agents with persistent memory and MCP tool invocation
+- **Multi-IM Support** — Lark (Feishu), DingTalk, WeCom, and Telegram
+- **Task Scheduling** — Immediate, countdown, and cron-based recurring tasks
+- **Web Console** — Manage workers, monitor tasks, and view execution logs
+- **MCP Tools** — Extensible tool system for worker capabilities
+- **Persistent Memory** — Workers remember context across sessions
+
+## How It Works
+
+```
+IM Platforms (Feishu/DingTalk/WeCom/Telegram)
+        ↓
+Platform Integration Layer
+        ↓
+Message Ingestion & Task Scheduling
+        ↓
+Workers (Claude AI Agents)
+        ↓
+Web Console (Management & Monitoring)
+```
+
+Users send messages through their IM platform. OpenBee routes messages to the appropriate worker, which uses Claude AI to plan and execute tasks. Workers can invoke MCP tools, manage their own memory, and schedule follow-up tasks.
+
+## Next Steps
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card title="Installation" href="/docs/guide/installation" />
+  <Card title="Quick Start" href="/docs/guide/quick-start" />
+  <Card title="Architecture" href="/docs/developer/architecture" />
 </Cards>

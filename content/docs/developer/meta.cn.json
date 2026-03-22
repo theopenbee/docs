@@ -1,0 +1,11 @@
+{
+  "title": "开发者指南",
+  "pages": [
+    "index",
+    "architecture",
+    "api-reference",
+    "mcp-reference",
+    "data-models",
+    "contributing"
+  ]
+}

@@ -1,0 +1,39 @@
+---
+title: 简介
+description: OpenBee — 将 Claude 作为你的数字员工运行
+---
+
+OpenBee 是一个数字员工解决方案，将 Claude AI 作为自主工作者运行。每个工作者都能够进行多步骤任务规划和独立执行，通过你现有的即时通讯平台进行沟通。
+
+## 核心特性
+
+- **AI 工作者** — 具有持久记忆和 MCP 工具调用能力的 Claude AI 代理
+- **多平台支持** — 飞书、钉钉、企业微信和 Telegram
+- **任务调度** — 即时执行、倒计时和基于 cron 的定时任务
+- **Web 控制台** — 管理工作者、监控任务、查看执行日志
+- **MCP 工具** — 可扩展的工具系统，增强工作者能力
+- **持久记忆** — 工作者跨会话记住上下文
+
+## 工作原理
+
+```
+即时通讯平台（飞书/钉钉/企业微信/Telegram）
+        ↓
+平台集成层
+        ↓
+消息接收与任务调度
+        ↓
+工作者（Claude AI 代理）
+        ↓
+Web 控制台（管理与监控）
+```
+
+用户通过即时通讯平台发送消息。OpenBee 将消息路由到对应的工作者，工作者使用 Claude AI 来规划和执行任务。工作者可以调用 MCP 工具、管理自己的记忆，并安排后续任务。
+
+## 下一步
+
+<Cards>
+  <Card title="安装" href="/docs/guide/installation" />
+  <Card title="快速开始" href="/docs/guide/quick-start" />
+  <Card title="架构概览" href="/docs/developer/architecture" />
+</Cards>

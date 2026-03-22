@@ -1,0 +1,11 @@
+{
+  "title": "Developer Guide",
+  "pages": [
+    "index",
+    "architecture",
+    "api-reference",
+    "mcp-reference",
+    "data-models",
+    "contributing"
+  ]
+}

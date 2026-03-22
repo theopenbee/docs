@@ -4,8 +4,8 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 
 // fill this with your actual GitHub info, for example:
 export const gitConfig = {
-  user: 'fuma-nama',
-  repo: 'fumadocs',
+  user: 'theopenbee',
+  repo: 'openbee',
   branch: 'main',
 };
 
@@ -22,7 +22,7 @@ export const i18nUI = defineI18nUI(i18n, {
 export function baseOptions(locale: string): BaseLayoutProps {
   return {
     nav: {
-      title: 'My App',
+      title: 'OpenBee',
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   };
