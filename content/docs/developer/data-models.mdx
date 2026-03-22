@@ -1,0 +1,69 @@
+---
+title: Data Models
+description: Core data structures in OpenBee
+---
+
+## Worker
+
+Represents an AI agent that executes tasks.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | UUID, auto-generated |
+| `name` | string | Display name |
+| `description` | string | Purpose and capabilities |
+| `memory` | string | Persistent context (written to CLAUDE.md) |
+| `work_dir` | string | Filesystem path (`~/.openbee/worker/{id}`) |
+| `status` | string | `idle`, `working`, or `error` |
+| `created_at` | int64 | Unix timestamp in milliseconds |
+| `updated_at` | int64 | Unix timestamp in milliseconds |
+
+## Task
+
+A unit of work assigned to a worker.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | UUID, auto-generated |
+| `message_id` | string | Reference to the originating platform message |
+| `worker_id` | string | Assigned worker |
+| `instruction` | string | What the worker should do |
+| `type` | string | `immediate`, `countdown`, or `scheduled` |
+| `status` | string | `pending`, `running`, `completed`, `failed`, or `cancelled` |
+| `scheduled_at` | int64? | Unix ms — trigger time for countdown tasks |
+| `cron_expr` | string | 5-field cron expression for scheduled tasks |
+| `next_run_at` | int64? | Unix ms — next trigger time for scheduled tasks |
+| `execution_id` | string | Associated execution record |
+| `created_at` | int64 | Unix timestamp in milliseconds |
+| `updated_at` | int64 | Unix timestamp in milliseconds |
+
+## Execution
+
+A record of a worker running a task.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | UUID, auto-generated |
+| `worker_id` | string? | Worker that ran this (null for bee executions) |
+| `session_id` | string | Claude session ID (for resumption) |
+| `trigger_input` | string | The original instruction/prompt |
+| `status` | string | `pending`, `running`, `completed`, or `failed` |
+| `result` | string | Execution output |
+| `log_path` | string | Filesystem path to execution logs |
+| `ai_process_pid` | int | PID of the Claude CLI process |
+| `started_at` | int64? | Unix timestamp in milliseconds |
+| `completed_at` | int64? | Unix timestamp in milliseconds |
+
+## Database Schema
+
+All tables use the `bee_` prefix and are stored in SQLite:
+
+- `bee_workers` — Worker definitions
+- `bee_tasks` — Task records
+- `bee_executions` — Execution history
+- `bee_messages` — Platform messages
+- `bee_sessions` — Session tracking
+- `bee_memory` — Key-value memory store
+- `bee_migrations` — Schema migration tracking
+
+Database path is configurable (default: `~/.openbee/openbee.db` or `./data/openbee.db`).
