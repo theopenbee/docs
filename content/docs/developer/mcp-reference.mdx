@@ -1,0 +1,192 @@
+---
+title: MCP Reference
+description: Complete MCP tool reference with parameters and return types
+---
+
+The MCP server runs at `/mcp/sse` using Server-Sent Events transport. All requests require the `bee.mcp.api_key` for authentication.
+
+## Worker Management
+
+### list_workers
+
+List all registered workers.
+
+**Parameters:** None
+
+**Returns:** Array of worker objects with `id`, `name`, `description`, `memory`, `work_dir`, `status`, `created_at`, `updated_at`.
+
+### get_worker
+
+Get a single worker by ID.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `worker_id` | string | Yes | Worker UUID |
+
+### create_worker
+
+Create a new worker.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | Yes | Worker display name |
+| `description` | string | No | Worker purpose |
+| `memory` | string | No | Initial persistent memory |
+| `work_dir` | string | No | Custom working directory |
+
+### update_worker
+
+Update worker properties (patch semantics).
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `worker_id` | string | Yes | Worker UUID |
+| `name` | string | No | New name |
+| `description` | string | No | New description |
+| `memory` | string | No | New memory content |
+
+### delete_worker
+
+Delete a worker.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `worker_id` | string | Yes | Worker UUID |
+| `delete_work_dir` | boolean | No | Also delete working directory |
+
+## Task Management
+
+### create_task
+
+Create a task for a worker.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `message_id` | string | Yes | Originating message ID |
+| `worker_id` | string | Yes | Target worker UUID |
+| `instruction` | string | Yes | Task instruction |
+| `type` | string | No | `immediate` (default), `countdown`, or `scheduled` |
+| `scheduled_at` | int64 | Conditional | Unix ms, required for `countdown` type |
+| `cron_expr` | string | Conditional | 5-field cron, required for `scheduled` type |
+
+### list_tasks
+
+Query tasks with filters.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `message_id` | string | No | Filter by message |
+| `session_key` | string | No | Filter by session |
+| `worker_id` | string | No | Filter by worker |
+| `status` | string | No | Filter by status |
+| `type` | string | No | Filter by type |
+
+### cancel_task
+
+Cancel a pending or scheduled task.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string | Yes | Task UUID |
+
+### mark_task_complete
+
+Mark a task as completed.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string | Yes | Task UUID |
+
+## Messaging
+
+### send_message
+
+Send a reply to the user.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `message_id` | string | Yes | Original message to reply to |
+| `content` | string | Yes | Reply text content |
+| `media_path` | string | No | Path to media file to attach |
+
+## Session Management
+
+### clear_session
+
+Clear all tasks and reset session contexts.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `session_key` | string | Yes | Session identifier |
+| `force` | boolean | No | Force clear even if tasks are running |
+
+### list_session_contexts
+
+List workers with active contexts in a session.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `session_key` | string | Yes | Session identifier |
+
+### clear_worker_session
+
+Reset a specific worker's Claude session context.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `session_key` | string | Yes | Session identifier |
+| `worker_id` | string | Yes | Worker UUID |
+
+## Memory
+
+### save_memory
+
+Save or update a memory entry.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `scope` | string | Yes | `global` or session key |
+| `key` | string | Yes | Memory key |
+| `value` | string | Yes | Memory value |
+
+### get_memory
+
+Retrieve memory entries.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `scope` | string | Yes | `global` or session key |
+| `key` | string | No | Specific key (omit for all entries in scope) |
+
+### delete_memory
+
+Delete a memory entry.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `scope` | string | Yes | `global` or session key |
+| `key` | string | Yes | Memory key |
+
+## Monitoring
+
+### get_worker_status
+
+View worker status and pending task count.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `worker_id` | string | Yes | Worker UUID |
+
+### get_system_overview
+
+Get system-wide statistics. No parameters.
+
+**Returns:** Worker count by status, total tasks by status, recent executions.
+
+### list_bee_executions
+
+View bee coordinator execution history.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `limit` | int | No | Max results (default 10) |
