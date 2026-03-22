@@ -1,0 +1,49 @@
+---
+title: MCP Tools
+description: How workers use MCP tools
+---
+
+OpenBee uses the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to give workers access to tools. Workers invoke tools through a local MCP server that OpenBee runs alongside the API.
+
+## What Is MCP?
+
+MCP is an open protocol that standardizes how AI models interact with tools and data sources. In OpenBee, the MCP server exposes tools for worker management, task scheduling, messaging, and memory.
+
+## Available Tool Categories
+
+### Worker Management
+- `list_workers` — List all workers
+- `get_worker` — Get worker details
+- `create_worker` — Create a new worker
+- `update_worker` — Update worker properties
+- `delete_worker` — Delete a worker
+
+### Task Management
+- `create_task` — Create immediate, countdown, or scheduled tasks
+- `list_tasks` — Query tasks with filters
+- `cancel_task` — Cancel a pending task
+- `mark_task_complete` — Mark a task as done
+
+### Messaging
+- `send_message` — Reply to the user (supports text and media)
+
+### Session Management
+- `clear_session` — Clear all tasks and contexts in a session
+- `list_session_contexts` — List active worker contexts
+- `clear_worker_session` — Reset a specific worker's context
+
+### Memory
+- `save_memory` — Store a key-value pair
+- `get_memory` — Retrieve memory entries
+- `delete_memory` — Remove a memory entry
+
+### Monitoring
+- `get_worker_status` — Check worker status and task count
+- `get_system_overview` — System-wide statistics
+- `list_bee_executions` — View bee coordinator execution history
+
+## MCP Server Connection
+
+The MCP server runs at `/mcp/sse` using Server-Sent Events (SSE) transport. It requires the `bee.mcp.api_key` from your configuration for authentication.
+
+See the [MCP Reference](/docs/developer/mcp-reference) for detailed tool parameters and return types.

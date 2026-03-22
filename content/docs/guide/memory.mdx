@@ -1,0 +1,71 @@
+---
+title: Memory
+description: Persistent memory system for workers
+---
+
+OpenBee provides a key-value memory system that persists across sessions. Workers can save, retrieve, and delete memory entries to maintain context over time.
+
+## Memory Scopes
+
+| Scope | Description |
+|-------|-------------|
+| **Global** | Shared across all sessions. Managed by the bee coordinator. |
+| **Session** | Scoped to a specific user session. Private to that conversation. |
+
+## Using Memory
+
+### Save Memory
+
+```json
+{
+  "name": "save_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference",
+    "value": "Prefers concise responses"
+  }
+}
+```
+
+### Retrieve Memory
+
+Get a single entry:
+
+```json
+{
+  "name": "get_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference"
+  }
+}
+```
+
+Get all entries in a scope:
+
+```json
+{
+  "name": "get_memory",
+  "arguments": {
+    "scope": "global"
+  }
+}
+```
+
+### Delete Memory
+
+```json
+{
+  "name": "delete_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference"
+  }
+}
+```
+
+## How Workers Use Memory
+
+Workers automatically use memory through MCP tools. The bee coordinator can save global memory for cross-session context, while workers save session-scoped memory for user-specific preferences.
+
+Memory entries are stored in the SQLite database (`bee_memory` table) and persist across server restarts.

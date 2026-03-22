@@ -1,0 +1,37 @@
+---
+title: Web Console
+description: Manage OpenBee through the web interface
+---
+
+The web console provides a graphical interface for managing workers, monitoring tasks, and viewing execution logs.
+
+## Accessing the Console
+
+Open your browser to `http://localhost:8080` (or your configured host:port). The console is automatically served alongside the API.
+
+## Dashboard
+
+The overview page shows:
+- Total workers and their status distribution
+- Recent executions
+- System statistics
+
+## Worker Management
+
+- **Create workers** with name, description, and initial memory
+- **Edit workers** to update their configuration
+- **Delete workers** and optionally remove their working directories
+- **View worker details** including status and execution history
+
+## Execution Logs
+
+- View all executions across workers
+- Filter by worker or session
+- **Real-time log streaming** — watch execution output as it happens
+- View execution results and status
+
+## Session Monitoring
+
+- Track active sessions across platforms
+- View which workers have active contexts in each session
+- Clear session contexts when needed
