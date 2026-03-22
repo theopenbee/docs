@@ -1,0 +1,71 @@
+---
+title: 记忆系统
+description: 工作者的持久化记忆系统
+---
+
+OpenBee 提供了一个跨会话持久化的键值记忆系统。工作者可以保存、检索和删除记忆条目，以便在不同时间保持上下文。
+
+## 记忆范围
+
+| 范围 | 描述 |
+|------|------|
+| **全局** | 跨所有会话共享。由蜂巢协调器管理。 |
+| **会话** | 限定在特定用户会话中。该对话私有。 |
+
+## 使用记忆
+
+### 保存记忆
+
+```json
+{
+  "name": "save_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference",
+    "value": "Prefers concise responses"
+  }
+}
+```
+
+### 检索记忆
+
+获取单个条目：
+
+```json
+{
+  "name": "get_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference"
+  }
+}
+```
+
+获取某个范围内的所有条目：
+
+```json
+{
+  "name": "get_memory",
+  "arguments": {
+    "scope": "global"
+  }
+}
+```
+
+### 删除记忆
+
+```json
+{
+  "name": "delete_memory",
+  "arguments": {
+    "scope": "global",
+    "key": "user_preference"
+  }
+}
+```
+
+## 工作者如何使用记忆
+
+工作者通过 MCP 工具自动使用记忆。蜂巢协调器可以保存全局记忆以实现跨会话上下文，而工作者保存会话范围的记忆以记录用户特定偏好。
+
+记忆条目存储在 SQLite 数据库（`bee_memory` 表）中，在服务器重启后依然保留。

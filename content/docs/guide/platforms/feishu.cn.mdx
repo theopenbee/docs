@@ -1,0 +1,46 @@
+---
+title: 飞书
+description: 设置飞书集成
+---
+
+## 创建飞书应用
+
+1. 前往[飞书开放平台](https://open.feishu.cn/)
+2. 创建一个新的自建应用
+3. 在应用凭证页面记录 **App ID** 和 **App Secret**
+
+## 配置权限
+
+为应用添加以下权限：
+- `im:message` — 发送和接收消息
+- `im:message.group_at_msg` — 接收群内 @消息
+- `im:resource` — 访问媒体资源
+
+## 设置事件订阅
+
+1. 在应用设置中，进入**事件订阅**
+2. 将请求 URL 配置为指向你的 OpenBee 服务器
+3. 订阅 `im.message.receive_v1` 事件
+
+## 配置 OpenBee
+
+在 `config.yaml` 中添加：
+
+```yaml
+bee:
+  platforms:
+    feishu:
+      enabled: true
+      app_id: "your-app-id"
+      app_secret: "your-app-secret"
+      max_media_size: 104857600  # 100MB，可选
+```
+
+## 发布应用
+
+1. 在飞书开放平台提交应用审核
+2. 审核通过后，用户即可找到并向你的机器人发送消息
+
+## 媒体支持
+
+飞书支持发送和接收媒体文件（图片、文档、音频、视频），最大不超过配置的 `max_media_size`（默认 100MB）。OpenBee 在可用时会使用 FFprobe/FFmpeg 进行媒体处理。

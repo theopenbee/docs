@@ -1,0 +1,36 @@
+---
+title: 企业微信
+description: 设置企业微信集成
+---
+
+## 创建企业微信机器人
+
+1. 前往[企业微信管理后台](https://work.weixin.qq.com/)
+2. 创建一个新的应用或机器人
+3. 记录 **Bot ID** 和 **Secret**
+
+## WebSocket 连接
+
+企业微信使用 WebSocket 连接进行实时消息传递。OpenBee 自动处理：
+- 连接建立
+- 心跳保活
+- 断线自动重连
+
+无需公网 URL 或 webhook 设置。
+
+## 配置 OpenBee
+
+在 `config.yaml` 中添加：
+
+```yaml
+bee:
+  platforms:
+    wecom:
+      enabled: true
+      bot_id: "your-bot-id"
+      secret: "your-secret"
+```
+
+## 部署
+
+配置完成后重启 OpenBee。与企业微信的 WebSocket 连接会自动建立。

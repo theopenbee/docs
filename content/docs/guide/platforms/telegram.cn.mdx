@@ -1,0 +1,31 @@
+---
+title: Telegram
+description: 设置 Telegram 机器人集成
+---
+
+## 创建 Telegram 机器人
+
+1. 打开 Telegram，向 [@BotFather](https://t.me/BotFather) 发送消息
+2. 发送 `/newbot` 并按照提示操作
+3. 记录 BotFather 提供的**机器人令牌**
+
+## 配置 OpenBee
+
+在 `config.yaml` 中添加：
+
+```yaml
+bee:
+  platforms:
+    telegram:
+      enabled: true
+      token: "your-bot-token"
+      max_media_size: 52428800  # 50MB，可选
+```
+
+## 部署
+
+重启 OpenBee。Telegram 机器人会自动开始轮询消息。用户可以通过机器人用户名找到你的机器人并开始聊天。
+
+## 媒体支持
+
+Telegram 支持不超过配置的 `max_media_size`（默认 50MB）的媒体文件。此限制受 Telegram Bot API 文件大小限制约束。

@@ -1,0 +1,49 @@
+---
+title: MCP 工具
+description: 工作者如何使用 MCP 工具
+---
+
+OpenBee 使用 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 为工作者提供工具访问能力。工作者通过 OpenBee 与 API 一起运行的本地 MCP 服务器来调用工具。
+
+## 什么是 MCP？
+
+MCP 是一个开放协议，标准化了 AI 模型与工具和数据源的交互方式。在 OpenBee 中，MCP 服务器暴露了用于工作者管理、任务调度、消息传递和记忆的工具。
+
+## 可用工具分类
+
+### 工作者管理
+- `list_workers` — 列出所有工作者
+- `get_worker` — 获取工作者详情
+- `create_worker` — 创建新工作者
+- `update_worker` — 更新工作者属性
+- `delete_worker` — 删除工作者
+
+### 任务管理
+- `create_task` — 创建即时、倒计时或定时任务
+- `list_tasks` — 带筛选条件查询任务
+- `cancel_task` — 取消待处理的任务
+- `mark_task_complete` — 将任务标记为已完成
+
+### 消息传递
+- `send_message` — 向用户回复（支持文本和媒体）
+
+### 会话管理
+- `clear_session` — 清除会话中的所有任务和上下文
+- `list_session_contexts` — 列出活跃的工作者上下文
+- `clear_worker_session` — 重置特定工作者的上下文
+
+### 记忆
+- `save_memory` — 存储键值对
+- `get_memory` — 检索记忆条目
+- `delete_memory` — 删除记忆条目
+
+### 监控
+- `get_worker_status` — 检查工作者状态和任务数量
+- `get_system_overview` — 系统整体统计信息
+- `list_bee_executions` — 查看蜂巢协调器执行历史
+
+## MCP 服务器连接
+
+MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events (SSE) 传输协议。认证需要配置中的 `bee.mcp.api_key`。
+
+详细的工具参数和返回类型请参阅 [MCP 参考](/docs/developer/mcp-reference)。

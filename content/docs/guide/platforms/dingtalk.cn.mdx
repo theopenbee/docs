@@ -1,0 +1,32 @@
+---
+title: 钉钉
+description: 设置钉钉集成
+---
+
+## 创建钉钉机器人
+
+1. 前往[钉钉开放平台](https://open-dev.dingtalk.com/)
+2. 创建一个新的应用
+3. 为应用添加机器人能力
+4. 记录 **Client ID** 和 **Client Secret**
+
+## 配置流式连接
+
+钉钉使用流式 SDK 连接 — 无需公网 webhook URL。SDK 会维持与钉钉服务器的持久连接。
+
+## 配置 OpenBee
+
+在 `config.yaml` 中添加：
+
+```yaml
+bee:
+  platforms:
+    dingtalk:
+      enabled: true
+      client_id: "your-client-id"
+      client_secret: "your-client-secret"
+```
+
+## 部署
+
+配置完成后，重启 OpenBee。钉钉流式连接会自动建立。用户可以在钉钉中找到并向你的机器人发送消息。

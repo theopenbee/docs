@@ -1,0 +1,32 @@
+---
+title: 平台接入
+description: 将 OpenBee 连接到你的 IM 平台
+---
+
+OpenBee 通过即时通讯平台进行通信。每个平台都有自己的适配器来处理消息的接收和发送。
+
+## 支持的平台
+
+| 平台 | 协议 | 主要特点 |
+|------|------|----------|
+| [飞书](/docs/guide/platforms/feishu) | HTTP webhook + SDK | 功能丰富，支持富文本消息和媒体 |
+| [钉钉](/docs/guide/platforms/dingtalk) | 流式 SDK | 实时流式连接 |
+| [企业微信](/docs/guide/platforms/wecom) | WebSocket | 持久化 WebSocket 连接，支持自动重连 |
+| [Telegram](/docs/guide/platforms/telegram) | Bot API（轮询） | 设置简单，全球可用 |
+
+## 工作原理
+
+1. 用户在 IM 平台中发送消息
+2. 平台适配器接收消息
+3. OpenBee 的消息接入网关对快速消息进行防抖处理（可配置，默认 3 秒）
+4. 蜂巢（协调器）将消息路由到相应的工作者
+5. 工作者执行任务并通过同一平台发送回复
+
+## 选择平台
+
+- **飞书** — 适合已在使用飞书的团队。支持丰富的媒体功能。
+- **钉钉** — 适合使用钉钉的团队。流式连接，无需设置 webhook。
+- **企业微信** — 适合使用企业微信的团队。基于 WebSocket，无需公网 URL。
+- **Telegram** — 适合个人使用或全球化团队。设置最为简单。
+
+你可以同时启用多个平台。
