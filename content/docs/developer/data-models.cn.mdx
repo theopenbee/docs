@@ -1,0 +1,69 @@
+---
+title: 数据模型
+description: OpenBee 的核心数据结构
+---
+
+## Worker（工作者）
+
+代表一个执行任务的 AI 代理。
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | UUID，自动生成 |
+| `name` | string | 显示名称 |
+| `description` | string | 用途和能力 |
+| `memory` | string | 持久化上下文（写入 CLAUDE.md） |
+| `work_dir` | string | 文件系统路径（`~/.openbee/worker/{id}`） |
+| `status` | string | `idle`、`working` 或 `error` |
+| `created_at` | int64 | Unix 毫秒时间戳 |
+| `updated_at` | int64 | Unix 毫秒时间戳 |
+
+## Task（任务）
+
+分配给工作者的工作单元。
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | UUID，自动生成 |
+| `message_id` | string | 关联的来源平台消息 |
+| `worker_id` | string | 分配的工作者 |
+| `instruction` | string | 工作者应执行的操作 |
+| `type` | string | `immediate`、`countdown` 或 `scheduled` |
+| `status` | string | `pending`、`running`、`completed`、`failed` 或 `cancelled` |
+| `scheduled_at` | int64? | Unix 毫秒时间戳 — 倒计时任务的触发时间 |
+| `cron_expr` | string | 定时任务的 5 字段 cron 表达式 |
+| `next_run_at` | int64? | Unix 毫秒时间戳 — 定时任务的下次触发时间 |
+| `execution_id` | string | 关联的执行记录 |
+| `created_at` | int64 | Unix 毫秒时间戳 |
+| `updated_at` | int64 | Unix 毫秒时间戳 |
+
+## Execution（执行记录）
+
+工作者运行任务的记录。
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | UUID，自动生成 |
+| `worker_id` | string? | 执行此任务的工作者（蜂巢执行时为 null） |
+| `session_id` | string | Claude 会话 ID（用于恢复） |
+| `trigger_input` | string | 原始指令/提示词 |
+| `status` | string | `pending`、`running`、`completed` 或 `failed` |
+| `result` | string | 执行输出 |
+| `log_path` | string | 执行日志的文件系统路径 |
+| `ai_process_pid` | int | Claude CLI 进程的 PID |
+| `started_at` | int64? | Unix 毫秒时间戳 |
+| `completed_at` | int64? | Unix 毫秒时间戳 |
+
+## 数据库架构
+
+所有表使用 `bee_` 前缀，存储在 SQLite 中：
+
+- `bee_workers` — 工作者定义
+- `bee_tasks` — 任务记录
+- `bee_executions` — 执行历史
+- `bee_messages` — 平台消息
+- `bee_sessions` — 会话跟踪
+- `bee_memory` — 键值记忆存储
+- `bee_migrations` — 数据库迁移记录
+
+数据库路径可配置（默认：`~/.openbee/openbee.db` 或 `./data/openbee.db`）。

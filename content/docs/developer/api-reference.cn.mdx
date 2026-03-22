@@ -1,0 +1,155 @@
+---
+title: API 参考
+description: OpenBee REST API 端点
+---
+
+所有端点从 `http://{host}:{port}/api/` 提供服务。
+
+## 工作者
+
+### 创建工作者
+
+`POST /api/workers`
+
+```json
+{
+  "name": "Assistant",
+  "description": "General purpose assistant",
+  "memory": "You are a helpful assistant."
+}
+```
+
+**响应：** `201 Created`
+
+```json
+{
+  "id": "uuid",
+  "name": "Assistant",
+  "description": "General purpose assistant",
+  "memory": "You are a helpful assistant.",
+  "work_dir": "/home/user/.openbee/worker/uuid",
+  "status": "idle",
+  "created_at": 1711180800000,
+  "updated_at": 1711180800000
+}
+```
+
+### 列出工作者
+
+`GET /api/workers`
+
+**响应：** `200 OK` — 工作者对象数组。
+
+### 获取工作者
+
+`GET /api/workers/:id`
+
+**响应：** `200 OK` — 单个工作者对象。
+
+### 更新工作者
+
+`PUT /api/workers/:id`
+
+```json
+{
+  "name": "Updated Name",
+  "description": "Updated description",
+  "memory": "Updated memory"
+}
+```
+
+所有字段均为可选（补丁语义）。
+
+**响应：** `200 OK` — 更新后的工作者对象。
+
+### 删除工作者
+
+`DELETE /api/workers/:id`
+
+**响应：** `200 OK`
+
+## 执行记录
+
+### 列出所有执行记录
+
+`GET /api/executions`
+
+**响应：** `200 OK` — 执行对象数组。
+
+### 获取执行记录
+
+`GET /api/executions/:id`
+
+**响应：** `200 OK` — 单个执行对象。
+
+### 流式执行日志
+
+`GET /api/executions/:id/logs`
+
+**响应：** Server-Sent Events (SSE) 日志行流。对于已完成的执行，返回完整的日志文件内容。
+
+### 列出工作者执行记录
+
+`GET /api/workers/:id/executions`
+
+**响应：** `200 OK` — 指定工作者的执行对象数组。
+
+### 列出会话执行记录
+
+`GET /api/sessions/:sessionId/executions`
+
+**响应：** `200 OK` — 指定会话的执行对象数组。
+
+## 本地聊天
+
+### 开始会话
+
+`POST /api/local/sessions`
+
+```json
+{
+  "worker_id": "uuid"
+}
+```
+
+**响应：** `201 Created`
+
+```json
+{
+  "id": "session-uuid"
+}
+```
+
+### 发送消息
+
+`POST /api/local/sessions/:id/messages`
+
+```json
+{
+  "content": "Hello, what can you do?"
+}
+```
+
+**响应：** `200 OK`
+
+### 流式回复
+
+`GET /api/local/sessions/:id/stream`
+
+**响应：** Server-Sent Events (SSE) 工作者回复流。
+
+## 内部接口
+
+### 设置日志级别
+
+`PUT /internal/log/level`
+
+```json
+{
+  "level": "debug"
+}
+```
+
+有效级别：`debug`、`info`、`warn`、`error`。
+
+**响应：** `200 OK`

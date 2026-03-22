@@ -1,0 +1,84 @@
+---
+title: 贡献指南
+description: 如何为 OpenBee 做出贡献
+---
+
+## 前置条件
+
+- Go 1.25+
+- Node.js 18+
+- pnpm
+- Git
+
+## 开发环境搭建
+
+```bash
+git clone https://github.com/theopenbee/openbee.git
+cd openbee
+make web      # 构建前端资源
+make build    # 构建二进制文件
+```
+
+## 本地运行
+
+```bash
+# 生成配置
+./bin/openbee config
+
+# 启动服务器
+./bin/openbee server
+```
+
+## 运行测试
+
+```bash
+go test ./...
+```
+
+## 项目结构
+
+```
+cmd/openbee/        CLI 入口点（main、server、config 命令）
+internal/
+  api/              HTTP API 处理器（Gin 路由器）
+  app/              应用生命周期和组件装配
+  bee/              核心机器人逻辑（投喂器、消息路由）
+  claude/           Claude CLI 集成（进程管理）
+  claudemd/         CLAUDE.md 文件管理
+  config/           YAML 配置加载
+  mcp/              MCP 服务器（工具、SSE 传输）
+  msgingest/        消息接入和防抖
+  model/            数据结构（Worker、Task、Execution）
+  platform/         平台适配器（飞书、钉钉、企业微信、Telegram）
+  store/            SQLite 数据持久化
+  task_dispatcher/  任务执行协调
+  task_scheduler/   基于 cron 的任务调度
+  worker/           工作者生命周期管理
+  logger/           结构化日志（zap）
+  media/            媒体处理（FFmpeg/FFprobe）
+web/                React + TypeScript 前端（Vite、Tailwind）
+```
+
+## 提交规范
+
+遵循 [Conventional Commits](https://www.conventionalcommits.org/)：
+
+| 类型 | 用途 |
+|------|------|
+| `feat` | 新功能 |
+| `fix` | 缺陷修复 |
+| `docs` | 文档 |
+| `test` | 测试 |
+| `refactor` | 代码重构 |
+| `chore` | 构建、依赖 |
+| `ci` | CI/CD 变更 |
+
+示例：`feat: add webhook support for WeCom platform`
+
+## Pull Request 流程
+
+1. Fork 仓库
+2. 从 `main` 创建分支
+3. 做出聚焦的、经过充分测试的更改
+4. 提交 PR 并附上清晰的描述
+5. 回应审查反馈
