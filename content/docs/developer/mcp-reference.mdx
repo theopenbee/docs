@@ -58,28 +58,28 @@ Delete a worker.
 
 ### create_task
 
-Create a task for a worker.
+Create a task assigning a worker to handle a user instruction from a message.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `message_id` | string | Yes | Originating message ID |
 | `worker_id` | string | Yes | Target worker UUID |
 | `instruction` | string | Yes | Task instruction |
-| `type` | string | No | `immediate` (default), `countdown`, or `scheduled` |
-| `scheduled_at` | int64 | Conditional | Unix ms, required for `countdown` type |
-| `cron_expr` | string | Conditional | 5-field cron, required for `scheduled` type |
+| `type` | string | Yes | `immediate`, `countdown`, or `scheduled` |
+| `scheduled_at` | integer | Conditional | Unix ms, required for `countdown` (must be >= now+5s) |
+| `cron_expr` | string | Conditional | 5-field cron expression, required for `scheduled` |
 
 ### list_tasks
 
-Query tasks with filters.
+List tasks filtered by message_id, session_key, and/or worker_id. `message_id` and `session_key` are mutually exclusive; at least one of `message_id`, `session_key`, or `worker_id` is required.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `message_id` | string | No | Filter by message |
-| `session_key` | string | No | Filter by session |
-| `worker_id` | string | No | Filter by worker |
-| `status` | string | No | Filter by status |
-| `type` | string | No | Filter by type |
+| `message_id` | string | No | Filter by message (mutually exclusive with `session_key`) |
+| `session_key` | string | No | Filter by session (mutually exclusive with `message_id`) |
+| `worker_id` | string | No | Filter by worker; can be combined with `session_key` |
+| `status` | string | No | Filter by status, supports comma-separated values (e.g. `pending,running`) |
+| `type` | string | No | Filter by type, supports comma-separated values (e.g. `immediate,countdown`) |
 
 ### cancel_task
 
@@ -101,24 +101,24 @@ Mark a task as completed.
 
 ### send_message
 
-Send a reply to the user.
+Send a message to the user on the originating platform. Supports sending media files (images, documents, audio, video) by providing a local file path.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `message_id` | string | Yes | Original message to reply to |
-| `content` | string | Yes | Reply text content |
-| `media_path` | string | No | Path to media file to attach |
+| `message_id` | string | Yes | Originating platform message ID (resolves platform and reply context) |
+| `content` | string | No | Text content to send (required unless `media_path` is provided) |
+| `media_path` | string | No | Local file path to upload and send as media |
 
 ## Session Management
 
 ### clear_session
 
-Clear all tasks and reset session contexts.
+Cancel all active tasks (terminating running worker processes), clear dispatcher queues, and reset all session contexts for the given session.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `session_key` | string | Yes | Session identifier |
-| `force` | boolean | No | Force clear even if tasks are running |
+| `force` | boolean | No | Skip confirmation when multiple workers are linked (default `false`) |
 
 ### list_session_contexts
 

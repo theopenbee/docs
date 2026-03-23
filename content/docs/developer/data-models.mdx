@@ -54,6 +54,40 @@ A record of a worker running a task.
 | `started_at` | int64? | Unix timestamp in milliseconds |
 | `completed_at` | int64? | Unix timestamp in milliseconds |
 
+## PlatformMessage
+
+An inbound message received from a chat platform.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | UUID, auto-generated |
+| `session_key` | string | Session identifier for grouping messages |
+| `platform` | string | Platform name (e.g. `feishu`, `dingtalk`, `wecom`, `telegram`) |
+| `content` | string | Message text content |
+| `status` | string | `received`, `feeding`, `bee_processed`, `merged`, or `failed` |
+| `merged_into` | string | ID of the message this was merged into (empty if not merged) |
+| `platform_msg_id` | string | Original platform message ID for deduplication |
+| `raw` | string | Raw message payload from platform |
+| `received_at` | int64 | Unix timestamp in milliseconds |
+| `created_at` | int64 | Unix timestamp in milliseconds |
+| `updated_at` | int64 | Unix timestamp in milliseconds |
+| `retry_count` | int | Number of retry attempts |
+
+## Memory
+
+A key-value memory entry scoped globally or per session.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | UUID, auto-generated |
+| `scope` | string | `global` or a session key |
+| `key` | string | Memory identifier |
+| `value` | string | Memory content |
+| `created_at` | int64 | Unix timestamp in milliseconds |
+| `updated_at` | int64 | Unix timestamp in milliseconds |
+
+Unique constraint on `(scope, key)` — one value per scope+key pair.
+
 ## Database Schema
 
 All tables use the `bee_` prefix and are stored in SQLite:
@@ -61,9 +95,11 @@ All tables use the `bee_` prefix and are stored in SQLite:
 - `bee_workers` — Worker definitions
 - `bee_tasks` — Task records
 - `bee_executions` — Execution history
-- `bee_messages` — Platform messages
-- `bee_sessions` — Session tracking
-- `bee_memory` — Key-value memory store
+- `bee_platform_messages` — Inbound platform messages
+- `bee_session_contexts` — Agent session context tracking
+- `bee_memories` — Key-value memory store
+- `bee_local_sessions` — Local chat sessions
+- `bee_local_replies` — Local chat replies
 - `bee_migrations` — Schema migration tracking
 
 Database path is configurable (default: `~/.openbee/openbee.db` or `./data/openbee.db`).

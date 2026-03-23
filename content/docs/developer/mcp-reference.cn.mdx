@@ -58,28 +58,28 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 
 ### create_task
 
-为数字员工创建任务。
+创建任务，将用户指令分配给数字员工处理。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
 | `message_id` | string | 是 | 来源消息 ID |
 | `worker_id` | string | 是 | 目标数字员工 UUID |
 | `instruction` | string | 是 | 任务指令 |
-| `type` | string | 否 | `immediate`（默认）、`countdown` 或 `scheduled` |
-| `scheduled_at` | int64 | 条件必填 | Unix 毫秒时间戳，`countdown` 类型必填 |
+| `type` | string | 是 | `immediate`、`countdown` 或 `scheduled` |
+| `scheduled_at` | integer | 条件必填 | Unix 毫秒时间戳，`countdown` 类型必填（须 >= 当前时间+5秒） |
 | `cron_expr` | string | 条件必填 | 5 字段 cron 表达式，`scheduled` 类型必填 |
 
 ### list_tasks
 
-带筛选条件查询任务。
+按 message_id、session_key 和/或 worker_id 筛选任务。`message_id` 和 `session_key` 互斥；`message_id`、`session_key`、`worker_id` 至少需要提供一个。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `message_id` | string | 否 | 按消息筛选 |
-| `session_key` | string | 否 | 按会话筛选 |
-| `worker_id` | string | 否 | 按数字员工筛选 |
-| `status` | string | 否 | 按状态筛选 |
-| `type` | string | 否 | 按类型筛选 |
+| `message_id` | string | 否 | 按消息筛选（与 `session_key` 互斥） |
+| `session_key` | string | 否 | 按会话筛选（与 `message_id` 互斥） |
+| `worker_id` | string | 否 | 按数字员工筛选，可与 `session_key` 组合使用 |
+| `status` | string | 否 | 按状态筛选，支持逗号分隔（如 `pending,running`） |
+| `type` | string | 否 | 按类型筛选，支持逗号分隔（如 `immediate,countdown`） |
 
 ### cancel_task
 
@@ -101,24 +101,24 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 
 ### send_message
 
-向用户发送回复。
+向用户在来源平台发送消息。支持发送媒体文件（图片、文档、音频、视频）。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `message_id` | string | 是 | 要回复的原始消息 |
-| `content` | string | 是 | 回复文本内容 |
-| `media_path` | string | 否 | 要附加的媒体文件路径 |
+| `message_id` | string | 是 | 来源平台消息 ID（用于确定平台和回复上下文） |
+| `content` | string | 否 | 文本内容（未提供 `media_path` 时必填） |
+| `media_path` | string | 否 | 要上传发送的本地媒体文件路径 |
 
 ## 会话管理
 
 ### clear_session
 
-清除所有任务并重置会话上下文。
+取消所有活跃任务（终止运行中的数字员工进程），清除调度队列，并重置给定会话的所有会话上下文。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
 | `session_key` | string | 是 | 会话标识符 |
-| `force` | boolean | 否 | 即使有任务正在运行也强制清除 |
+| `force` | boolean | 否 | 当有多个关联数字员工时跳过确认（默认 `false`） |
 
 ### list_session_contexts
 

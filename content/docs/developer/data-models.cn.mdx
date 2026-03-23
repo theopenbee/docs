@@ -54,6 +54,40 @@ description: OpenBee 的核心数据结构
 | `started_at` | int64? | Unix 毫秒时间戳 |
 | `completed_at` | int64? | Unix 毫秒时间戳 |
 
+## PlatformMessage（平台消息）
+
+从聊天平台接收的入站消息。
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | UUID，自动生成 |
+| `session_key` | string | 用于消息分组的会话标识符 |
+| `platform` | string | 平台名称（如 `feishu`、`dingtalk`、`wecom`、`telegram`） |
+| `content` | string | 消息文本内容 |
+| `status` | string | `received`、`feeding`、`bee_processed`、`merged` 或 `failed` |
+| `merged_into` | string | 合并目标消息的 ID（未合并时为空） |
+| `platform_msg_id` | string | 原始平台消息 ID，用于去重 |
+| `raw` | string | 来自平台的原始消息负载 |
+| `received_at` | int64 | Unix 毫秒时间戳 |
+| `created_at` | int64 | Unix 毫秒时间戳 |
+| `updated_at` | int64 | Unix 毫秒时间戳 |
+| `retry_count` | int | 重试次数 |
+
+## Memory（记忆）
+
+按全局或会话作用域存储的键值记忆条目。
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `id` | string | UUID，自动生成 |
+| `scope` | string | `global` 或会话键 |
+| `key` | string | 记忆标识符 |
+| `value` | string | 记忆内容 |
+| `created_at` | int64 | Unix 毫秒时间戳 |
+| `updated_at` | int64 | Unix 毫秒时间戳 |
+
+`(scope, key)` 上有唯一约束 — 每个 scope+key 对只有一个值。
+
 ## 数据库架构
 
 所有表使用 `bee_` 前缀，存储在 SQLite 中：
@@ -61,9 +95,11 @@ description: OpenBee 的核心数据结构
 - `bee_workers` — 数字员工定义
 - `bee_tasks` — 任务记录
 - `bee_executions` — 执行历史
-- `bee_messages` — 平台消息
-- `bee_sessions` — 会话跟踪
-- `bee_memory` — 键值记忆存储
+- `bee_platform_messages` — 入站平台消息
+- `bee_session_contexts` — 代理会话上下文跟踪
+- `bee_memories` — 键值记忆存储
+- `bee_local_sessions` — 本地聊天会话
+- `bee_local_replies` — 本地聊天回复
 - `bee_migrations` — 数据库迁移记录
 
 数据库路径可配置（默认：`~/.openbee/openbee.db` 或 `./data/openbee.db`）。
