@@ -15,24 +15,28 @@ graph TD
         Feishu["Feishu"]
         DingTalk["DingTalk"]
         WeCom["WeCom"]
+        WeChat["WeChat"]
         Telegram["Telegram"]
     end
 
-    Feishu & DingTalk & WeCom & Telegram --> Adapters
+    Feishu & DingTalk & WeCom & WeChat & Telegram --> Adapters
 
     Adapters["Platform Adapters\n(Receiver + Sender)"]
     Adapters --> Ingestion
+    Adapters -->|Reply| IM
 
     Ingestion["Message Ingestion\n(Debounce + Gateway)"]
     Ingestion --> Bee
 
     Bee["Bee (Coordinator)\n(Feeder + Claude Code)"]
     Bee --> Dispatcher
+    Bee -->|Feedback| Adapters
 
     Dispatcher["Task Dispatcher\n+ Task Scheduler"]
     Dispatcher --> Workers
 
     Workers["Workers\n(Claude Code Agents)"]
+    Workers -->|Feedback| Adapters
 ```
 
 ## Message Flow

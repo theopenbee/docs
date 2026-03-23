@@ -15,24 +15,28 @@ graph TD
         Feishu["飞书"]
         DingTalk["钉钉"]
         WeCom["企业微信"]
+        WeChat["微信"]
         Telegram["Telegram"]
     end
 
-    Feishu & DingTalk & WeCom & Telegram --> Adapters
+    Feishu & DingTalk & WeCom & WeChat & Telegram --> Adapters
 
     Adapters["平台适配器\n(接收器 + 发送器)"]
     Adapters --> Ingestion
+    Adapters -->|发送回复| IM
 
     Ingestion["消息接入\n(防抖 + 网关)"]
     Ingestion --> Bee
 
     Bee["蜂巢（协调器）\n(投喂器 + Claude Code)"]
     Bee --> Dispatcher
+    Bee -->|反馈消息| Adapters
 
     Dispatcher["任务调度器\n+ 定时任务调度器"]
     Dispatcher --> Workers
 
     Workers["数字员工\n(Claude Code 代理)"]
+    Workers -->|反馈消息| Adapters
 ```
 
 ## 消息流
