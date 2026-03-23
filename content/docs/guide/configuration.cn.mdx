@@ -12,6 +12,12 @@ server:
   port: 8080
   host: localhost
   debug: false
+  auth:
+    username: admin
+    password: ""
+    jwt_secret: ""
+    access_token_ttl: 2h
+    refresh_token_ttl: 168h
 
 database:
   path: ./data/openbee.db
@@ -19,7 +25,7 @@ database:
 bee:
   claude:
     path: claude
-    timeout: 45m
+    timeout: 30m
   mcp:
     api_key: "your-api-key"
   platforms:
@@ -36,12 +42,21 @@ bee:
       enabled: false
       bot_id: ""
       secret: ""
+      websocket_url: "wss://openws.work.weixin.qq.com"
     telegram:
       enabled: false
       token: ""
       max_media_size: 52428800
+      auth_code: ""
+    weixin:
+      enabled: false
+      token: ""
+      base_url: "https://ilinkai.weixin.qq.com"
+      cdn_base_url: "https://novac2c.cdn.weixin.qq.com/c2c"
+      user_id: ""
+      max_media_size: 104857600
   feeder:
-    timeout: 10m
+    timeout: 5m
   media:
     ffprobe_path: ffprobe
     ffmpeg_path: ffmpeg
@@ -56,6 +71,18 @@ bee:
 | `server.host` | string | `localhost` | 服务器绑定地址 |
 | `server.debug` | boolean | `false` | 启用调试模式（详细日志） |
 
+## 认证
+
+基于 JWT 的 Web UI 认证。认证是可选的——仅在设置了 `password` 时启用。
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `server.auth.username` | string | `admin` | 登录用户名 |
+| `server.auth.password` | string | — | 登录密码。为空时禁用认证。 |
+| `server.auth.jwt_secret` | string | — | HMAC-SHA256 签名密钥。未设置时启动时自动生成。 |
+| `server.auth.access_token_ttl` | duration | `2h` | 访问令牌有效期 |
+| `server.auth.refresh_token_ttl` | duration | `168h` | 刷新令牌有效期（7 天） |
+
 ## 数据库
 
 | 字段 | 类型 | 默认值 | 描述 |
@@ -67,7 +94,7 @@ bee:
 | 字段 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
 | `bee.claude.path` | string | `claude` | Claude Code CLI 二进制文件路径 |
-| `bee.claude.timeout` | duration | `45m` | 每次 Claude Code 调用的最大执行时间 |
+| `bee.claude.timeout` | duration | `30m` | 每次 Claude Code 调用的最大执行时间 |
 
 ## MCP
 
@@ -91,15 +118,23 @@ bee:
 | `bee.platforms.wecom.enabled` | boolean | `false` | 启用企业微信集成 |
 | `bee.platforms.wecom.bot_id` | string | — | 企业微信机器人 ID |
 | `bee.platforms.wecom.secret` | string | — | 企业微信机器人密钥 |
+| `bee.platforms.wecom.websocket_url` | string | `wss://openws.work.weixin.qq.com` | 企业微信 WebSocket 地址 |
 | `bee.platforms.telegram.enabled` | boolean | `false` | 启用 Telegram 集成 |
 | `bee.platforms.telegram.token` | string | — | Telegram 机器人令牌 |
 | `bee.platforms.telegram.max_media_size` | integer | `52428800` | 最大媒体文件大小（50MB） |
+| `bee.platforms.telegram.auth_code` | string | — | `/auth` 命令的验证码。为空时允许所有用户使用。 |
+| `bee.platforms.weixin.enabled` | boolean | `false` | 启用微信集成 |
+| `bee.platforms.weixin.token` | string | — | 微信令牌（通过扫码登录获取） |
+| `bee.platforms.weixin.base_url` | string | `https://ilinkai.weixin.qq.com` | 微信 API 基础地址 |
+| `bee.platforms.weixin.cdn_base_url` | string | `https://novac2c.cdn.weixin.qq.com/c2c` | 微信 CDN 基础地址 |
+| `bee.platforms.weixin.user_id` | string | — | 微信用户 ID（扫码登录时自动获取） |
+| `bee.platforms.weixin.max_media_size` | integer | `104857600` | 最大媒体文件大小（100MB） |
 
 ## 投喂器
 
 | 字段 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
-| `bee.feeder.timeout` | duration | `10m` | 蜂巢（协调器）投喂超时时间 |
+| `bee.feeder.timeout` | duration | `5m` | 蜂巢（协调器）投喂超时时间 |
 
 ## 媒体
 

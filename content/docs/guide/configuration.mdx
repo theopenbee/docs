@@ -12,6 +12,12 @@ server:
   port: 8080
   host: localhost
   debug: false
+  auth:
+    username: admin
+    password: ""
+    jwt_secret: ""
+    access_token_ttl: 2h
+    refresh_token_ttl: 168h
 
 database:
   path: ./data/openbee.db
@@ -19,7 +25,7 @@ database:
 bee:
   claude:
     path: claude
-    timeout: 45m
+    timeout: 30m
   mcp:
     api_key: "your-api-key"
   platforms:
@@ -36,12 +42,21 @@ bee:
       enabled: false
       bot_id: ""
       secret: ""
+      websocket_url: "wss://openws.work.weixin.qq.com"
     telegram:
       enabled: false
       token: ""
       max_media_size: 52428800
+      auth_code: ""
+    weixin:
+      enabled: false
+      token: ""
+      base_url: "https://ilinkai.weixin.qq.com"
+      cdn_base_url: "https://novac2c.cdn.weixin.qq.com/c2c"
+      user_id: ""
+      max_media_size: 104857600
   feeder:
-    timeout: 10m
+    timeout: 5m
   media:
     ffprobe_path: ffprobe
     ffmpeg_path: ffmpeg
@@ -56,6 +71,18 @@ bee:
 | `server.host` | string | `localhost` | Server bind address |
 | `server.debug` | boolean | `false` | Enable debug mode (verbose logging) |
 
+## Authentication
+
+JWT-based authentication for the web UI. Authentication is optional — it is only enabled when `password` is set.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `server.auth.username` | string | `admin` | Login username |
+| `server.auth.password` | string | — | Login password. If empty, authentication is disabled. |
+| `server.auth.jwt_secret` | string | — | HMAC-SHA256 signing secret. Auto-generated on startup if not set. |
+| `server.auth.access_token_ttl` | duration | `2h` | Access token lifetime |
+| `server.auth.refresh_token_ttl` | duration | `168h` | Refresh token lifetime (7 days) |
+
 ## Database
 
 | Field | Type | Default | Description |
@@ -67,7 +94,7 @@ bee:
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `bee.claude.path` | string | `claude` | Path to Claude Code CLI binary |
-| `bee.claude.timeout` | duration | `45m` | Maximum execution time per Claude Code invocation |
+| `bee.claude.timeout` | duration | `30m` | Maximum execution time per Claude Code invocation |
 
 ## MCP
 
@@ -91,15 +118,23 @@ See [Platform Setup](/docs/guide/platforms) for detailed configuration of each p
 | `bee.platforms.wecom.enabled` | boolean | `false` | Enable WeCom integration |
 | `bee.platforms.wecom.bot_id` | string | — | WeCom bot ID |
 | `bee.platforms.wecom.secret` | string | — | WeCom bot secret |
+| `bee.platforms.wecom.websocket_url` | string | `wss://openws.work.weixin.qq.com` | WeCom WebSocket URL |
 | `bee.platforms.telegram.enabled` | boolean | `false` | Enable Telegram integration |
 | `bee.platforms.telegram.token` | string | — | Telegram bot token |
 | `bee.platforms.telegram.max_media_size` | integer | `52428800` | Max media file size (50MB) |
+| `bee.platforms.telegram.auth_code` | string | — | Passcode for `/auth` command. If empty, all users are allowed. |
+| `bee.platforms.weixin.enabled` | boolean | `false` | Enable Weixin (WeChat) integration |
+| `bee.platforms.weixin.token` | string | — | Weixin bot token (acquired via QR code login) |
+| `bee.platforms.weixin.base_url` | string | `https://ilinkai.weixin.qq.com` | Weixin API base URL |
+| `bee.platforms.weixin.cdn_base_url` | string | `https://novac2c.cdn.weixin.qq.com/c2c` | Weixin CDN base URL |
+| `bee.platforms.weixin.user_id` | string | — | Weixin user ID (extracted during QR code login) |
+| `bee.platforms.weixin.max_media_size` | integer | `104857600` | Max media file size (100MB) |
 
 ## Feeder
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bee.feeder.timeout` | duration | `10m` | Bee (coordinator) feeding timeout |
+| `bee.feeder.timeout` | duration | `5m` | Bee (coordinator) feeding timeout |
 
 ## Media
 
