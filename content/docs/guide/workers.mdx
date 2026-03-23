@@ -1,42 +1,143 @@
 ---
 title: Workers
-description: Create and manage AI workers
+description: Create and manage AI workers through conversation
 ---
 
-Workers are Claude Code agents that execute tasks. Each worker has its own identity, persistent memory, and working directory.
+Workers are AI agents that execute tasks on your behalf. Each worker has its own name, description, memory, and working directory. You can manage workers through the web console or by chatting directly with the Bee (coordinator) in your IM platform.
+
+## Managing Workers Through Conversation
+
+You can create, update, and delete workers by simply telling the Bee what you need:
+
+### Create a Worker
+
+> "Create a worker named Xiaoming to help with code reviews"
+
+> "I need a new worker for writing documentation, call it DocWriter"
+
+The Bee will create the worker and confirm with you. You can specify a name, description, and initial memory in your message.
+
+### Update a Worker
+
+> "Update Xiaoming's description to focus on Go code reviews"
+
+> "Change DocWriter's memory to always write in Chinese"
+
+### Delete a Worker
+
+> "Delete the DocWriter worker"
+
+> "Remove the worker named Xiaoming and clean up its files"
+
+### List Workers
+
+> "Show me all workers"
+
+> "What workers do I have?"
+
+### Check Worker Status
+
+> "What's the status of Xiaoming?"
+
+> "Show me the system status"
 
 ## Worker Properties
 
+Each worker has the following properties:
+
 | Property | Description |
 |----------|-------------|
-| **Name** | Display name for the worker |
-| **Description** | What the worker does — used for task routing |
-| **Memory** | Persistent context written to the worker's CLAUDE.md file |
-| **Work Directory** | Filesystem path, defaults to `~/.openbee/worker/{id}`. Can be set to a custom absolute path. |
-| **Status** | `idle`, `working`, or `error` |
+| **Name** | Display name for addressing the worker in conversation |
+| **Description** | What the worker does — the Bee uses this for task routing |
+| **Memory** | Persistent context that shapes the worker's behavior |
+| **Work Directory** | Filesystem path where the worker operates. Defaults to `~/.openbee/worker/{id}`, or set to a custom absolute path. |
 
-## Creating a Worker
+## How the Bee Routes Tasks to Workers
 
-### Via Web Console
+When you send a message, the Bee decides which worker should handle it based on these rules (in priority order):
 
-1. Open the web console at `http://localhost:8080`
-2. Go to **Workers** → **Create Worker**
-3. Fill in the name, description, and optional memory
+1. **Explicit mention** — If you name a worker, it goes directly to that worker. E.g., "Xiaoming, review this PR"
+2. **Conversation continuation** — Follow-up messages go to the same worker as the previous task. E.g., "Make it more concise"
+3. **Description matching** — The Bee matches your request against worker descriptions semantically
+4. **Fallback** — If no worker matches, the Bee will suggest creating one
 
-## Managing Workers
+## Best Practices
 
-Workers can be managed through the web console or by sending messages directly in your IM platform. For example, you can ask the bot to create a worker, update a worker's description, and more — all through natural conversation.
+### Write Clear Descriptions
+
+The description is the most important field for task routing. The Bee uses it to match your requests to the right worker.
+
+**Good descriptions** — specific, skill-focused:
+- "Helps with Go backend development, code reviews, and API design"
+- "Writes and maintains project documentation in Chinese and English"
+- "Monitors system health and generates daily status reports"
+
+**Poor descriptions** — vague, unhelpful for routing:
+- "Worker 1"
+- "Does stuff"
+- "General helper"
+
+When multiple workers have overlapping descriptions, the Bee will ask you to choose. Keep descriptions distinct so routing is automatic.
+
+### Use Memory to Shape Behavior
+
+Memory is written to the worker's system prompt and persists across all tasks. Use it to define the worker's personality, expertise, and constraints.
+
+**Domain expertise:**
+> "You are an experienced Python developer. Always follow PEP 8 and prefer type hints."
+
+**Communication style:**
+> "Respond concisely in bullet points. Avoid long paragraphs."
+
+**Constraints and safety:**
+> "Never make breaking API changes without confirming with the user first."
+
+**Context and audience:**
+> "You are helping a non-technical user. Explain everything in simple terms."
+
+You can update memory at any time through conversation:
+
+> "Update Xiaoming's memory to include: always run tests before committing"
+
+### Set Custom Work Directories for Project Work
+
+By default, each worker gets an isolated directory at `~/.openbee/worker/{id}`. For workers that need to operate on a specific project, set the work directory to your project path:
+
+> "Create a worker named DevBot with work directory /Users/me/my-project"
+
+This allows the worker to read, edit, and manage files in your project directly. The work directory must be an absolute path.
+
+### Use Specific Names for Easy Delegation
+
+Give workers short, memorable names so you can easily delegate tasks:
+
+> "Xiaoming, fix the login bug"
+
+> "DocBot, update the README"
+
+When you mention a worker by name, the Bee routes directly to that worker without any guesswork.
+
+### Create Specialized Workers
+
+Rather than one general-purpose worker, create specialized workers for different domains. This improves:
+
+- **Routing accuracy** — specific descriptions match requests better
+- **Response quality** — focused memory produces more relevant output
+- **Task isolation** — each worker maintains its own context and working state
+
+**Example team setup:**
+- **DevBot** — "Backend development, code reviews, bug fixes for the API server"
+- **DocBot** — "Technical documentation, README updates, API reference writing"
+- **OpsBot** — "System monitoring, deployment checks, infrastructure management"
 
 ## CLAUDE.md Customization
 
-Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's memory field, but you can also edit it directly.
-
-The working directory defaults to `~/.openbee/worker/{worker-id}/`. You can also specify a custom working directory (must be an absolute path) when creating or updating a worker.
+Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's memory field, but you can also edit it directly for advanced customization.
 
 ## Worker Status
 
 | Status | Meaning |
 |--------|---------|
 | `idle` | Worker is available to accept tasks |
-| `working` | Worker is currently executing a task |
+| `working` | Worker is currently executing a task. New tasks will be queued. |
 | `error` | Worker encountered an error during execution |
