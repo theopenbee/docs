@@ -8,6 +8,8 @@
     "platforms",
     "workers",
     "tasks",
+    "sessions",
+    "memory",
     "web-console"
   ]
 }
