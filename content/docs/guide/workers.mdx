@@ -12,7 +12,7 @@ Workers are Claude Code agents that execute tasks. Each worker has its own ident
 | **Name** | Display name for the worker |
 | **Description** | What the worker does — used for task routing |
 | **Memory** | Persistent context written to the worker's CLAUDE.md file |
-| **Work Directory** | Isolated filesystem path (`~/.openbee/worker/{id}`) |
+| **Work Directory** | Filesystem path, defaults to `~/.openbee/worker/{id}`. Can be set to a custom absolute path. |
 | **Status** | `idle`, `working`, or `error` |
 
 ## Creating a Worker
@@ -25,13 +25,13 @@ Workers are Claude Code agents that execute tasks. Each worker has its own ident
 
 ## Managing Workers
 
-Workers can be managed through the web console.
+Workers can be managed through the web console or by sending messages directly in your IM platform. For example, you can ask the bot to create a worker, update a worker's description, and more — all through natural conversation.
 
 ## CLAUDE.md Customization
 
 Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's memory field, but you can also edit it directly.
 
-The working directory is located at `~/.openbee/worker/{worker-id}/`.
+The working directory defaults to `~/.openbee/worker/{worker-id}/`. You can also specify a custom working directory (must be an absolute path) when creating or updating a worker.
 
 ## Worker Status
 
