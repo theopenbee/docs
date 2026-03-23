@@ -13,6 +13,7 @@ OpenBee 通过即时通讯平台进行通信。每个平台都有自己的适配
 | [钉钉](/cn/docs/guide/platforms/dingtalk) | 流式 SDK | 实时流式连接 |
 | [企业微信](/cn/docs/guide/platforms/wecom) | WebSocket | 持久化 WebSocket 连接，支持自动重连 |
 | [Telegram](/cn/docs/guide/platforms/telegram) | Bot API（轮询） | 设置简单，全球可用 |
+| [微信](/cn/docs/guide/platforms/weixin) | 长轮询 | 通过扫码登录接入微信 |
 
 ## 工作原理
 
@@ -28,5 +29,6 @@ OpenBee 通过即时通讯平台进行通信。每个平台都有自己的适配
 - **钉钉** — 适合使用钉钉的团队。流式连接，无需设置 webhook。
 - **企业微信** — 适合使用企业微信的团队。基于 WebSocket，无需公网 URL。
 - **Telegram** — 适合个人使用或全球化团队。设置最为简单。
+- **微信** — 适合触达微信用户。扫码登录，无需公网 URL。
 
 你可以同时启用多个平台。

@@ -1,0 +1,59 @@
+---
+title: Weixin
+description: Set up Weixin (WeChat) integration
+---
+
+## Prerequisites
+
+- A personal WeChat account (for QR code login)
+- FFmpeg installed (required for voice message transcoding)
+
+## Configure via Interactive Setup
+
+The easiest way to set up Weixin is through the interactive config command:
+
+```bash
+openbee config
+```
+
+When prompted, select **Weixin** from the platform list. The wizard will display a QR code in your terminal — scan it with WeChat on your phone and confirm to complete authentication. The token and user ID will be automatically populated.
+
+If QR code login fails, you can enter the bot token and user ID manually when prompted.
+
+## Configure Manually
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    weixin:
+      enabled: true
+      token: "your-bot-token"
+      user_id: "your-user-id"
+      base_url: "https://ilinkai.weixin.qq.com"         # optional
+      cdn_base_url: "https://novac2c.cdn.weixin.qq.com/c2c"  # optional
+      max_media_size: 104857600  # 100MB, optional
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `token` | Yes | Bot token obtained via QR code login |
+| `user_id` | Yes | User ID obtained via QR code login |
+| `base_url` | No | Weixin API base URL (default: `https://ilinkai.weixin.qq.com`) |
+| `cdn_base_url` | No | CDN base URL for media (default: `https://novac2c.cdn.weixin.qq.com/c2c`) |
+| `max_media_size` | No | Maximum media file size in bytes (default: 100MB) |
+
+## Deploy
+
+Restart OpenBee. The Weixin adapter uses long-polling to receive messages — no public URL or webhook is required.
+
+## Media Support
+
+Weixin supports images, voice messages, files, and videos up to the configured `max_media_size` (default 100MB). Media is encrypted during transfer using AES-128-ECB.
+
+Voice messages are received in SILK format and automatically transcoded to WAV using FFmpeg. Make sure FFmpeg is installed and accessible (configure `bee.media.ffmpeg_path` if it's not on your PATH).
+
+## Session Expiry
+
+If the session expires (error code -14), the adapter will automatically pause for 60 minutes and then resume polling. You may need to re-run `openbee config` to re-authenticate if the token becomes permanently invalid.
