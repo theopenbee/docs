@@ -16,16 +16,14 @@ OpenBee is a digital worker solution that runs Claude Code as autonomous workers
 
 ## How It Works
 
-```
-IM Platforms (Feishu/DingTalk/WeCom/Telegram)
-        ↓
-Platform Integration Layer
-        ↓
-Message Ingestion & Task Scheduling
-        ↓
-Workers (Claude Code Agents)
-        ↓
-Web Console (Management & Monitoring)
+```mermaid
+graph TD
+    A["💬 IM Platforms\nLark / DingTalk / WeCom / WeChat / Telegram"] --> B["🔌 Platform Integration Layer"]
+    B --> C["🧠 Central Brain\nClaude Code"]
+    C --> D["📨 Task Assignment"]
+    D --> E["🤖 Workers — Digital Employees\nClaude Code Agents"]
+    E -. "Reply Results" .-> A
+    C -. "Reply Results" .-> A
 ```
 
 Users send messages through their IM platform. OpenBee routes messages to the appropriate worker, which uses Claude Code to plan and execute tasks. Workers can invoke MCP tools, manage their own memory, and schedule follow-up tasks.
