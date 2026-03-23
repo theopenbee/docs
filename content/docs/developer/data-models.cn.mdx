@@ -3,7 +3,7 @@ title: 数据模型
 description: OpenBee 的核心数据结构
 ---
 
-## Worker（工作者）
+## Worker（数字员工）
 
 代表一个执行任务的 AI 代理。
 
@@ -20,14 +20,14 @@ description: OpenBee 的核心数据结构
 
 ## Task（任务）
 
-分配给工作者的工作单元。
+分配给数字员工的工作单元。
 
 | 字段 | 类型 | 描述 |
 |------|------|------|
 | `id` | string | UUID，自动生成 |
 | `message_id` | string | 关联的来源平台消息 |
-| `worker_id` | string | 分配的工作者 |
-| `instruction` | string | 工作者应执行的操作 |
+| `worker_id` | string | 分配的数字员工 |
+| `instruction` | string | 数字员工应执行的操作 |
 | `type` | string | `immediate`、`countdown` 或 `scheduled` |
 | `status` | string | `pending`、`running`、`completed`、`failed` 或 `cancelled` |
 | `scheduled_at` | int64? | Unix 毫秒时间戳 — 倒计时任务的触发时间 |
@@ -39,12 +39,12 @@ description: OpenBee 的核心数据结构
 
 ## Execution（执行记录）
 
-工作者运行任务的记录。
+数字员工运行任务的记录。
 
 | 字段 | 类型 | 描述 |
 |------|------|------|
 | `id` | string | UUID，自动生成 |
-| `worker_id` | string? | 执行此任务的工作者（蜂巢执行时为 null） |
+| `worker_id` | string? | 执行此任务的数字员工（蜂巢执行时为 null） |
 | `session_id` | string | Claude Code 会话 ID（用于恢复） |
 | `trigger_input` | string | 原始指令/提示词 |
 | `status` | string | `pending`、`running`、`completed` 或 `failed` |
@@ -58,7 +58,7 @@ description: OpenBee 的核心数据结构
 
 所有表使用 `bee_` 前缀，存储在 SQLite 中：
 
-- `bee_workers` — 工作者定义
+- `bee_workers` — 数字员工定义
 - `bee_tasks` — 任务记录
 - `bee_executions` — 执行历史
 - `bee_messages` — 平台消息

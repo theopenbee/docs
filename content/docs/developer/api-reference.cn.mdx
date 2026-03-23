@@ -5,9 +5,9 @@ description: OpenBee REST API 端点
 
 所有端点从 `http://{host}:{port}/api/` 提供服务。
 
-## 工作者
+## 数字员工
 
-### 创建工作者
+### 创建数字员工
 
 `POST /api/workers`
 
@@ -34,19 +34,19 @@ description: OpenBee REST API 端点
 }
 ```
 
-### 列出工作者
+### 列出数字员工
 
 `GET /api/workers`
 
-**响应：** `200 OK` — 工作者对象数组。
+**响应：** `200 OK` — 数字员工对象数组。
 
-### 获取工作者
+### 获取数字员工
 
 `GET /api/workers/:id`
 
-**响应：** `200 OK` — 单个工作者对象。
+**响应：** `200 OK` — 单个数字员工对象。
 
-### 更新工作者
+### 更新数字员工
 
 `PUT /api/workers/:id`
 
@@ -60,9 +60,9 @@ description: OpenBee REST API 端点
 
 所有字段均为可选（补丁语义）。
 
-**响应：** `200 OK` — 更新后的工作者对象。
+**响应：** `200 OK` — 更新后的数字员工对象。
 
-### 删除工作者
+### 删除数字员工
 
 `DELETE /api/workers/:id`
 
@@ -88,11 +88,11 @@ description: OpenBee REST API 端点
 
 **响应：** Server-Sent Events (SSE) 日志行流。对于已完成的执行，返回完整的日志文件内容。
 
-### 列出工作者执行记录
+### 列出数字员工执行记录
 
 `GET /api/workers/:id/executions`
 
-**响应：** `200 OK` — 指定工作者的执行对象数组。
+**响应：** `200 OK` — 指定数字员工的执行对象数组。
 
 ### 列出会话执行记录
 
@@ -136,7 +136,7 @@ description: OpenBee REST API 端点
 
 `GET /api/local/sessions/:id/stream`
 
-**响应：** Server-Sent Events (SSE) 工作者回复流。
+**响应：** Server-Sent Events (SSE) 数字员工回复流。
 
 ## 内部接口
 

@@ -5,65 +5,65 @@ description: 完整的 MCP 工具参考，包含参数和返回类型
 
 MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所有请求需要 `bee.mcp.api_key` 进行认证。
 
-## 工作者管理
+## 数字员工管理
 
 ### list_workers
 
-列出所有已注册的工作者。
+列出所有已注册的数字员工。
 
 **参数：** 无
 
-**返回：** 工作者对象数组，包含 `id`、`name`、`description`、`memory`、`work_dir`、`status`、`created_at`、`updated_at`。
+**返回：** 数字员工对象数组，包含 `id`、`name`、`description`、`memory`、`work_dir`、`status`、`created_at`、`updated_at`。
 
 ### get_worker
 
-根据 ID 获取单个工作者。
+根据 ID 获取单个数字员工。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `worker_id` | string | 是 | 工作者 UUID |
+| `worker_id` | string | 是 | 数字员工 UUID |
 
 ### create_worker
 
-创建新工作者。
+创建新数字员工。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `name` | string | 是 | 工作者显示名称 |
-| `description` | string | 否 | 工作者用途 |
+| `name` | string | 是 | 数字员工显示名称 |
+| `description` | string | 否 | 数字员工用途 |
 | `memory` | string | 否 | 初始持久化记忆 |
 | `work_dir` | string | 否 | 自定义工作目录 |
 
 ### update_worker
 
-更新工作者属性（补丁语义）。
+更新数字员工属性（补丁语义）。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `worker_id` | string | 是 | 工作者 UUID |
+| `worker_id` | string | 是 | 数字员工 UUID |
 | `name` | string | 否 | 新名称 |
 | `description` | string | 否 | 新描述 |
 | `memory` | string | 否 | 新记忆内容 |
 
 ### delete_worker
 
-删除工作者。
+删除数字员工。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `worker_id` | string | 是 | 工作者 UUID |
+| `worker_id` | string | 是 | 数字员工 UUID |
 | `delete_work_dir` | boolean | 否 | 同时删除工作目录 |
 
 ## 任务管理
 
 ### create_task
 
-为工作者创建任务。
+为数字员工创建任务。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
 | `message_id` | string | 是 | 来源消息 ID |
-| `worker_id` | string | 是 | 目标工作者 UUID |
+| `worker_id` | string | 是 | 目标数字员工 UUID |
 | `instruction` | string | 是 | 任务指令 |
 | `type` | string | 否 | `immediate`（默认）、`countdown` 或 `scheduled` |
 | `scheduled_at` | int64 | 条件必填 | Unix 毫秒时间戳，`countdown` 类型必填 |
@@ -77,7 +77,7 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 |------|------|------|------|
 | `message_id` | string | 否 | 按消息筛选 |
 | `session_key` | string | 否 | 按会话筛选 |
-| `worker_id` | string | 否 | 按工作者筛选 |
+| `worker_id` | string | 否 | 按数字员工筛选 |
 | `status` | string | 否 | 按状态筛选 |
 | `type` | string | 否 | 按类型筛选 |
 
@@ -122,7 +122,7 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 
 ### list_session_contexts
 
-列出会话中有活跃上下文的工作者。
+列出会话中有活跃上下文的数字员工。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -130,12 +130,12 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 
 ### clear_worker_session
 
-重置特定工作者的 Claude Code 会话上下文。
+重置特定数字员工的 Claude Code 会话上下文。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
 | `session_key` | string | 是 | 会话标识符 |
-| `worker_id` | string | 是 | 工作者 UUID |
+| `worker_id` | string | 是 | 数字员工 UUID |
 
 ## 记忆
 
@@ -171,17 +171,17 @@ MCP 服务器运行在 `/mcp/sse`，使用 Server-Sent Events 传输协议。所
 
 ### get_worker_status
 
-查看工作者状态和待处理任务数量。
+查看数字员工状态和待处理任务数量。
 
 | 参数 | 类型 | 必填 | 描述 |
 |------|------|------|------|
-| `worker_id` | string | 是 | 工作者 UUID |
+| `worker_id` | string | 是 | 数字员工 UUID |
 
 ### get_system_overview
 
 获取系统整体统计信息。无参数。
 
-**返回：** 按状态统计的工作者数量、按状态统计的任务总数、最近的执行记录。
+**返回：** 按状态统计的数字员工数量、按状态统计的任务总数、最近的执行记录。
 
 ### list_bee_executions
 
