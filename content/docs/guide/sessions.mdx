@@ -1,0 +1,96 @@
+---
+title: Sessions
+description: Manage conversation context to save tokens and improve efficiency
+---
+
+A session is the conversation context shared between you and the Bee (and its workers) within an IM chat. Each time you send a message, the Bee and workers resume from where the previous conversation left off — they remember what was discussed, what tasks were assigned, and what decisions were made.
+
+Good session management helps you save tokens and keep interactions stable. Over time, conversation context accumulates and grows large. Knowing when and how to clear it keeps things efficient.
+
+## How Sessions Work
+
+Every IM chat has a session. When you send a message:
+
+1. The Bee loads its existing conversation context for this chat
+2. It processes your message with full awareness of prior conversation history
+3. If a worker is involved, that worker also loads its own conversation context
+
+The Bee and each worker maintain **independent contexts**. This means the Bee remembers the coordination history, while each worker remembers its own task history — they don't interfere with each other.
+
+## Viewing Session Contexts
+
+You can check which agents currently have active conversation context:
+
+> "Show me the session contexts"
+
+> "Who has active context in this chat?"
+
+The Bee will list all agents (itself and workers) that have conversation history in the current session, along with when each context was last updated.
+
+## Clearing a Worker's Context
+
+If a specific worker is behaving unexpectedly, giving irrelevant responses, or has accumulated too much context, you can reset just that worker:
+
+> "Clear Xiaoming's session"
+
+> "Reset DocBot's context"
+
+This clears the worker's conversation history so it starts fresh on the next task. Other workers and the Bee are not affected, and any running tasks continue normally.
+
+**When to clear a worker's context:**
+- The worker is confused or stuck in a loop
+- The worker keeps referencing outdated information from earlier conversations
+- You want a clean slate for a new type of work with that worker
+
+## Clearing the Entire Session
+
+For a complete reset of all conversation contexts:
+
+> "Clear the session"
+
+> "Reset everything"
+
+This is a more comprehensive operation that:
+
+1. Stops all running worker processes
+2. Cancels all pending and running tasks
+3. Clears conversation context for the Bee **and** all workers
+
+If multiple workers have active context, the Bee will ask for confirmation before proceeding, showing you which workers will be affected. Confirm to proceed.
+
+**When to clear the entire session:**
+- You want to start a completely new topic or project
+- The overall conversation has grown very large and responses are slow
+- You're experiencing unexpected behavior across multiple workers
+
+## Best Practices
+
+### Clear Proactively, Not Reactively
+
+Don't wait for problems to appear. If you're switching to a completely different topic or project, clear the session first. This prevents context from the old work from confusing responses about the new work.
+
+### Prefer Worker-Level Clears
+
+When only one worker is having issues, clear just that worker's context instead of the entire session. This preserves useful context in the Bee and other workers.
+
+### Watch for Signs of Context Bloat
+
+As conversation context grows, you may notice:
+- Slower response times
+- Workers referencing old, irrelevant information
+- Unexpected behavior or confused responses
+
+These are signals that it's time to clear some context.
+
+### Session Context vs. Worker Memory
+
+Session context and worker memory are different things:
+
+| | Session Context | Worker Memory |
+|---|---|---|
+| **Scope** | Conversation history in one IM chat | Persistent worker configuration |
+| **Lifetime** | Until cleared | Until explicitly changed |
+| **Cleared by** | Session/context clear operations | Updating or deleting the worker |
+| **Contains** | Past messages, task results, decisions | Role, expertise, constraints |
+
+Clearing a session does **not** erase worker memory. Workers retain their name, description, and memory settings — they just lose the conversation history.
