@@ -23,57 +23,9 @@ Workers are Claude Code agents that execute tasks. Each worker has its own ident
 2. Go to **Workers** → **Create Worker**
 3. Fill in the name, description, and optional memory
 
-### Via API
-
-```bash
-curl -X POST http://localhost:8080/api/workers \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Research Assistant",
-    "description": "Helps with research tasks and summarization",
-    "memory": "You are a research assistant. Be thorough and cite sources."
-  }'
-```
-
-### Via MCP Tool
-
-Workers can create other workers using the `create_worker` MCP tool:
-
-```json
-{
-  "name": "create_worker",
-  "arguments": {
-    "name": "Research Assistant",
-    "description": "Helps with research tasks",
-    "memory": "You are a research assistant."
-  }
-}
-```
-
 ## Managing Workers
 
-### Update a Worker
-
-```bash
-curl -X PUT http://localhost:8080/api/workers/<worker-id> \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Updated Name",
-    "memory": "Updated memory content"
-  }'
-```
-
-### Delete a Worker
-
-```bash
-curl -X DELETE http://localhost:8080/api/workers/<worker-id>
-```
-
-### List Workers
-
-```bash
-curl http://localhost:8080/api/workers
-```
+Workers can be managed through the web console.
 
 ## CLAUDE.md Customization
 

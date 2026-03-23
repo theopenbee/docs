@@ -47,14 +47,6 @@ Web 控制台地址为 `http://localhost:8080`（或你配置的主机:端口）
 3. 设置名称（如 "Assistant"）和描述
 4. 可选添加初始记忆以定义工作者的角色
 
-或者使用本地聊天立即交互：
-
-```bash
-curl -X POST http://localhost:8080/api/local/sessions \
-  -H "Content-Type: application/json" \
-  -d '{"worker_id": "<worker-id>"}'
-```
-
 ## 4. 发送消息
 
 如果你已配置了某个平台（如飞书），在 IM 应用中向你的机器人发送消息。OpenBee 会将消息路由到相应的工作者。

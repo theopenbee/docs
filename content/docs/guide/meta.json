@@ -9,7 +9,6 @@
     "workers",
     "tasks",
     "memory",
-    "web-console",
-    "mcp-tools"
+    "web-console"
   ]
 }

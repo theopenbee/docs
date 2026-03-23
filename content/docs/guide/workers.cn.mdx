@@ -23,57 +23,9 @@ description: 创建和管理 AI 工作者
 2. 进入**工作者** → **创建工作者**
 3. 填写名称、描述和可选的记忆
 
-### 通过 API
-
-```bash
-curl -X POST http://localhost:8080/api/workers \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Research Assistant",
-    "description": "Helps with research tasks and summarization",
-    "memory": "You are a research assistant. Be thorough and cite sources."
-  }'
-```
-
-### 通过 MCP 工具
-
-工作者可以使用 `create_worker` MCP 工具创建其他工作者：
-
-```json
-{
-  "name": "create_worker",
-  "arguments": {
-    "name": "Research Assistant",
-    "description": "Helps with research tasks",
-    "memory": "You are a research assistant."
-  }
-}
-```
-
 ## 管理工作者
 
-### 更新工作者
-
-```bash
-curl -X PUT http://localhost:8080/api/workers/<worker-id> \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Updated Name",
-    "memory": "Updated memory content"
-  }'
-```
-
-### 删除工作者
-
-```bash
-curl -X DELETE http://localhost:8080/api/workers/<worker-id>
-```
-
-### 列出工作者
-
-```bash
-curl http://localhost:8080/api/workers
-```
+工作者可以通过 Web 控制台进行管理。
 
 ## CLAUDE.md 自定义
 

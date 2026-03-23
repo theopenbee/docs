@@ -47,14 +47,6 @@ Open the web console and create your first worker:
 3. Set a name (e.g., "Assistant") and description
 4. Optionally add initial memory to define the worker's personality
 
-Alternatively, use the local chat to interact immediately:
-
-```bash
-curl -X POST http://localhost:8080/api/local/sessions \
-  -H "Content-Type: application/json" \
-  -d '{"worker_id": "<worker-id>"}'
-```
-
 ## 4. Send a Message
 
 If you have a platform configured (e.g., Feishu), send a message to your bot in the IM app. OpenBee will route it to the appropriate worker.
