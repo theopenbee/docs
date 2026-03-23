@@ -137,19 +137,3 @@ All fields are optional (patch semantics).
 `GET /api/local/sessions/:id/stream`
 
 **Response:** Server-Sent Events (SSE) stream of worker replies.
-
-## Internal
-
-### Set Log Level
-
-`PUT /internal/log/level`
-
-```json
-{
-  "level": "debug"
-}
-```
-
-Valid levels: `debug`, `info`, `warn`, `error`.
-
-**Response:** `200 OK`

@@ -137,19 +137,3 @@ description: OpenBee REST API 端点
 `GET /api/local/sessions/:id/stream`
 
 **响应：** Server-Sent Events (SSE) 数字员工回复流。
-
-## 内部接口
-
-### 设置日志级别
-
-`PUT /internal/log/level`
-
-```json
-{
-  "level": "debug"
-}
-```
-
-有效级别：`debug`、`info`、`warn`、`error`。
-
-**响应：** `200 OK`
