@@ -51,14 +51,6 @@ Open the web console and create your first worker:
 
 If you have a platform configured (e.g., Feishu), send a message to your bot in the IM app. OpenBee will route it to the appropriate worker.
 
-For local testing, use the local chat API:
-
-```bash
-curl -X POST http://localhost:8080/api/local/sessions/<session-id>/messages \
-  -H "Content-Type: application/json" \
-  -d '{"content": "Hello, what can you do?"}'
-```
-
 ## Next Steps
 
 - [Configuration Reference](/docs/guide/configuration) — Full config.yaml documentation

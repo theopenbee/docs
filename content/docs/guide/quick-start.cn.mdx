@@ -51,14 +51,6 @@ Web 控制台地址为 `http://localhost:8080`（或你配置的主机:端口）
 
 如果你已配置了某个平台（如飞书），在 IM 应用中向你的机器人发送消息。OpenBee 会将消息路由到相应的工作者。
 
-对于本地测试，使用本地聊天 API：
-
-```bash
-curl -X POST http://localhost:8080/api/local/sessions/<session-id>/messages \
-  -H "Content-Type: application/json" \
-  -d '{"content": "Hello, what can you do?"}'
-```
-
 ## 下一步
 
 - [配置参考](/cn/docs/guide/configuration) — 完整的 config.yaml 文档
