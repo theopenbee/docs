@@ -5,6 +5,50 @@ description: OpenBee REST API endpoints
 
 All endpoints are served from `http://{host}:{port}/api/`.
 
+## Authentication
+
+All `/api/*` endpoints (except `/api/auth/*`) require a JWT token, passed via the `Authorization: Bearer <token>` header or the `token` query parameter.
+
+### Login
+
+`POST /api/auth/login`
+
+```json
+{
+  "username": "admin",
+  "password": "secret"
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "refresh_token": "eyJhbG...",
+  "expires_in": 3600
+}
+```
+
+### Refresh Token
+
+`POST /api/auth/refresh`
+
+```json
+{
+  "refresh_token": "eyJhbG..."
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "expires_in": 3600
+}
+```
+
 ## Workers
 
 ### Create Worker
@@ -15,9 +59,12 @@ All endpoints are served from `http://{host}:{port}/api/`.
 {
   "name": "Assistant",
   "description": "General purpose assistant",
-  "memory": "You are a helpful assistant."
+  "memory": "You are a helpful assistant.",
+  "work_dir": "/path/to/project"
 }
 ```
+
+Only `name` is required. All other fields are optional.
 
 **Response:** `201 Created`
 
@@ -64,9 +111,17 @@ All fields are optional (patch semantics).
 
 ### Delete Worker
 
-`DELETE /api/workers/:id`
+`DELETE /api/workers/:id?delete_work_dir=true`
+
+The `delete_work_dir` query parameter is optional. When set to `true`, the worker's work directory is also removed.
 
 **Response:** `200 OK`
+
+```json
+{
+  "status": "deleted"
+}
+```
 
 ## Executions
 
@@ -82,11 +137,11 @@ All fields are optional (patch semantics).
 
 **Response:** `200 OK` — Single execution object.
 
-### Stream Execution Logs
+### Get Execution Logs
 
 `GET /api/executions/:id/logs`
 
-**Response:** Server-Sent Events (SSE) stream of log lines. For completed executions, returns the full log file content.
+**Response:** `200 OK` — Plain text log content. Completed execution logs include a `Cache-Control: public, max-age=3600` header.
 
 ### List Worker Executions
 
@@ -102,13 +157,13 @@ All fields are optional (patch semantics).
 
 ## Local Chat
 
-### Start Session
+### Create Session
 
 `POST /api/local/sessions`
 
 ```json
 {
-  "worker_id": "uuid"
+  "name": "My Chat"
 }
 ```
 
@@ -116,7 +171,30 @@ All fields are optional (patch semantics).
 
 ```json
 {
-  "id": "session-uuid"
+  "id": "session-uuid",
+  "name": "My Chat",
+  "created_at": 1711180800000,
+  "updated_at": 1711180800000
+}
+```
+
+### List Sessions
+
+`GET /api/local/sessions`
+
+**Response:** `200 OK` — Array of local session objects.
+
+### Delete Session
+
+`DELETE /api/local/sessions/:id`
+
+Cascading delete: removes all messages, replies, and session contexts associated with the session.
+
+**Response:** `200 OK`
+
+```json
+{
+  "status": "deleted"
 }
 ```
 
@@ -126,11 +204,55 @@ All fields are optional (patch semantics).
 
 ```json
 {
-  "content": "Hello, what can you do?"
+  "content": "Hello, what can you do?",
+  "media_path": "/optional/path/to/uploaded/file"
 }
 ```
 
+Only `content` is required. `media_path` is optional and must point to a file within the session's upload directory.
+
+**Response:** `202 Accepted`
+
+```json
+{
+  "status": "queued"
+}
+```
+
+### Get Messages
+
+`GET /api/local/sessions/:id/messages`
+
+**Response:** `200 OK` — Array of chat messages (both user and bee messages), sorted by timestamp.
+
+```json
+[
+  {
+    "role": "user",
+    "content": "Hello",
+    "ts": 1711180800000
+  },
+  {
+    "role": "bee",
+    "content": "Hi there!",
+    "ts": 1711180801000
+  }
+]
+```
+
+### Upload Media
+
+`POST /api/local/sessions/:id/media`
+
+Multipart form data with a `file` field.
+
 **Response:** `200 OK`
+
+```json
+{
+  "path": "/home/user/.openbee/local-uploads/session-uuid/filename.png"
+}
+```
 
 ### Stream Replies
 

@@ -5,6 +5,50 @@ description: OpenBee REST API 端点
 
 所有端点从 `http://{host}:{port}/api/` 提供服务。
 
+## 认证
+
+所有 `/api/*` 端点（`/api/auth/*` 除外）都需要 JWT 令牌，通过 `Authorization: Bearer <token>` 请求头或 `token` 查询参数传递。
+
+### 登录
+
+`POST /api/auth/login`
+
+```json
+{
+  "username": "admin",
+  "password": "secret"
+}
+```
+
+**响应：** `200 OK`
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "refresh_token": "eyJhbG...",
+  "expires_in": 3600
+}
+```
+
+### 刷新令牌
+
+`POST /api/auth/refresh`
+
+```json
+{
+  "refresh_token": "eyJhbG..."
+}
+```
+
+**响应：** `200 OK`
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "expires_in": 3600
+}
+```
+
 ## 数字员工
 
 ### 创建数字员工
@@ -15,9 +59,12 @@ description: OpenBee REST API 端点
 {
   "name": "Assistant",
   "description": "General purpose assistant",
-  "memory": "You are a helpful assistant."
+  "memory": "You are a helpful assistant.",
+  "work_dir": "/path/to/project"
 }
 ```
+
+仅 `name` 为必填项，其他字段均为可选。
 
 **响应：** `201 Created`
 
@@ -64,9 +111,17 @@ description: OpenBee REST API 端点
 
 ### 删除数字员工
 
-`DELETE /api/workers/:id`
+`DELETE /api/workers/:id?delete_work_dir=true`
+
+`delete_work_dir` 查询参数为可选。设置为 `true` 时，会同时删除数字员工的工作目录。
 
 **响应：** `200 OK`
+
+```json
+{
+  "status": "deleted"
+}
+```
 
 ## 执行记录
 
@@ -82,11 +137,11 @@ description: OpenBee REST API 端点
 
 **响应：** `200 OK` — 单个执行对象。
 
-### 流式执行日志
+### 获取执行日志
 
 `GET /api/executions/:id/logs`
 
-**响应：** Server-Sent Events (SSE) 日志行流。对于已完成的执行，返回完整的日志文件内容。
+**响应：** `200 OK` — 纯文本日志内容。已完成的执行日志包含 `Cache-Control: public, max-age=3600` 响应头。
 
 ### 列出数字员工执行记录
 
@@ -102,13 +157,13 @@ description: OpenBee REST API 端点
 
 ## 本地聊天
 
-### 开始会话
+### 创建会话
 
 `POST /api/local/sessions`
 
 ```json
 {
-  "worker_id": "uuid"
+  "name": "My Chat"
 }
 ```
 
@@ -116,7 +171,30 @@ description: OpenBee REST API 端点
 
 ```json
 {
-  "id": "session-uuid"
+  "id": "session-uuid",
+  "name": "My Chat",
+  "created_at": 1711180800000,
+  "updated_at": 1711180800000
+}
+```
+
+### 列出会话
+
+`GET /api/local/sessions`
+
+**响应：** `200 OK` — 本地会话对象数组。
+
+### 删除会话
+
+`DELETE /api/local/sessions/:id`
+
+级联删除：移除会话关联的所有消息、回复和会话上下文。
+
+**响应：** `200 OK`
+
+```json
+{
+  "status": "deleted"
 }
 ```
 
@@ -126,11 +204,55 @@ description: OpenBee REST API 端点
 
 ```json
 {
-  "content": "Hello, what can you do?"
+  "content": "Hello, what can you do?",
+  "media_path": "/optional/path/to/uploaded/file"
 }
 ```
 
+仅 `content` 为必填项。`media_path` 为可选，必须指向会话上传目录内的文件。
+
+**响应：** `202 Accepted`
+
+```json
+{
+  "status": "queued"
+}
+```
+
+### 获取消息
+
+`GET /api/local/sessions/:id/messages`
+
+**响应：** `200 OK` — 聊天消息数组（包括用户和 Bee 的消息），按时间戳排序。
+
+```json
+[
+  {
+    "role": "user",
+    "content": "Hello",
+    "ts": 1711180800000
+  },
+  {
+    "role": "bee",
+    "content": "Hi there!",
+    "ts": 1711180801000
+  }
+]
+```
+
+### 上传媒体
+
+`POST /api/local/sessions/:id/media`
+
+使用 multipart 表单数据，包含 `file` 字段。
+
 **响应：** `200 OK`
+
+```json
+{
+  "path": "/home/user/.openbee/local-uploads/session-uuid/filename.png"
+}
+```
 
 ### 流式回复
 
