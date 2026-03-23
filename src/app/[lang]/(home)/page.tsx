@@ -3,7 +3,7 @@ import { MessageSquare, Bot, Clock, Wrench } from 'lucide-react';
 
 const translations = {
   en: {
-    tagline: 'Run Claude Code as Your Digital Employees',
+    tagline: 'Run Claude Code as Your Digital Workers',
     description:
       'OpenBee turns Claude Code into autonomous workers that communicate through Lark, DingTalk, WeCom, and Telegram. Multi-step task planning, persistent memory, and extensible MCP tools.',
     getStarted: 'Get Started',
@@ -32,7 +32,7 @@ const translations = {
     ],
   },
   cn: {
-    tagline: '将 Claude Code 作为你的数字员工运行',
+    tagline: '将 Claude Code 作为你的数字工作者运行',
     description:
       'OpenBee 将 Claude Code 变为自主工作者，通过飞书、钉钉、企业微信和 Telegram 进行沟通。支持多步骤任务规划、持久记忆和可扩展的 MCP 工具。',
     getStarted: '快速开始',
