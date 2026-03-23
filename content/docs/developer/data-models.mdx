@@ -45,12 +45,12 @@ A record of a worker running a task.
 |-------|------|-------------|
 | `id` | string | UUID, auto-generated |
 | `worker_id` | string? | Worker that ran this (null for bee executions) |
-| `session_id` | string | Claude session ID (for resumption) |
+| `session_id` | string | Claude Code session ID (for resumption) |
 | `trigger_input` | string | The original instruction/prompt |
 | `status` | string | `pending`, `running`, `completed`, or `failed` |
 | `result` | string | Execution output |
 | `log_path` | string | Filesystem path to execution logs |
-| `ai_process_pid` | int | PID of the Claude CLI process |
+| `ai_process_pid` | int | PID of the Claude Code CLI process |
 | `started_at` | int64? | Unix timestamp in milliseconds |
 | `completed_at` | int64? | Unix timestamp in milliseconds |
 

@@ -45,12 +45,12 @@ description: OpenBee 的核心数据结构
 |------|------|------|
 | `id` | string | UUID，自动生成 |
 | `worker_id` | string? | 执行此任务的工作者（蜂巢执行时为 null） |
-| `session_id` | string | Claude 会话 ID（用于恢复） |
+| `session_id` | string | Claude Code 会话 ID（用于恢复） |
 | `trigger_input` | string | 原始指令/提示词 |
 | `status` | string | `pending`、`running`、`completed` 或 `failed` |
 | `result` | string | 执行输出 |
 | `log_path` | string | 执行日志的文件系统路径 |
-| `ai_process_pid` | int | Claude CLI 进程的 PID |
+| `ai_process_pid` | int | Claude Code CLI 进程的 PID |
 | `started_at` | int64? | Unix 毫秒时间戳 |
 | `completed_at` | int64? | Unix 毫秒时间戳 |
 

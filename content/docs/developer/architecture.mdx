@@ -5,7 +5,7 @@ description: OpenBee's internal architecture and message flow
 
 ## Overview
 
-OpenBee is built as a modular Go application with a React frontend. The backend handles message routing, task scheduling, worker management, and Claude AI integration.
+OpenBee is built as a modular Go application with a React frontend. The backend handles message routing, task scheduling, worker management, and Claude Code integration.
 
 ## System Architecture
 
@@ -30,7 +30,7 @@ OpenBee is built as a modular Go application with a React frontend. The backend 
                     ▼
        ┌──────────────────────────┐
        │  Bee (Coordinator)       │
-       │  (Feeder + Claude AI)    │
+       │  (Feeder + Claude Code)    │
        └────────────┬─────────────┘
                     ▼
        ┌──────────────────────────┐
@@ -40,7 +40,7 @@ OpenBee is built as a modular Go application with a React frontend. The backend 
                     ▼
        ┌──────────────────────────┐
        │  Workers                 │
-       │  (Claude AI Agents)      │
+       │  (Claude Code Agents)      │
        └──────────────────────────┘
 ```
 
@@ -48,10 +48,10 @@ OpenBee is built as a modular Go application with a React frontend. The backend 
 
 1. **Platform Receiver** — Each platform adapter listens for incoming messages via its protocol (webhook, streaming, WebSocket, or polling)
 2. **Message Ingestion** — The gateway debounces rapid messages (default 3s window) and stores them in the database
-3. **Bee Feeder** — Polls for unprocessed messages every 5 seconds, groups by session key, and invokes the bee (Claude AI coordinator)
-4. **Bee Coordinator** — A Claude AI process that reads the message and decides which worker should handle it, creates tasks accordingly
+3. **Bee Feeder** — Polls for unprocessed messages every 5 seconds, groups by session key, and invokes the bee (Claude Code coordinator)
+4. **Bee Coordinator** — A Claude Code process that reads the message and decides which worker should handle it, creates tasks accordingly
 5. **Task Dispatcher** — Picks up pending tasks and routes them to the assigned worker
-6. **Worker Execution** — Spawns a Claude CLI subprocess with the worker's CLAUDE.md and working directory. The worker uses MCP tools to interact with the system.
+6. **Worker Execution** — Spawns a Claude Code CLI subprocess with the worker's CLAUDE.md and working directory. The worker uses MCP tools to interact with the system.
 7. **Response** — The worker calls `send_message` via MCP, which routes the reply back through the platform adapter
 
 ## Key Components
@@ -71,13 +71,13 @@ The `Gateway` aggregates rapid messages within a configurable debounce window be
 The `Feeder` is the core component:
 - Polls the `platform_messages` table for unprocessed messages
 - Groups messages by session key
-- Invokes Claude AI as the bee coordinator
+- Invokes Claude Code as the bee coordinator
 - Manages session continuity (resume existing sessions)
 - Handles failure recovery and retries
 
-### Claude Integration (`internal/claude/`)
+### Claude Code Integration (`internal/claude/`)
 
-The `Invoker` spawns Claude CLI as subprocesses:
+The `Invoker` spawns Claude Code CLI as subprocesses:
 - Passes working directory with CLAUDE.md for system prompt
 - Communicates via stdout/stderr streams
 - Supports session resumption via `--resume` flag
@@ -95,12 +95,12 @@ SQLite-based persistence with tables prefixed `bee_`:
 
 ### MCP Server (`internal/mcp/`)
 
-Exposes 19 tools via SSE transport at `/mcp/sse`. Authenticated with API key. Used by both bee and workers during Claude CLI execution.
+Exposes 19 tools via SSE transport at `/mcp/sse`. Authenticated with API key. Used by both bee and workers during Claude Code CLI execution.
 
 ## Concurrency Model
 
 - The bee feeder and task scheduler run as independent goroutines
 - Each platform receiver runs in its own goroutine
-- Worker executions are isolated processes (Claude CLI subprocesses)
+- Worker executions are isolated processes (Claude Code CLI subprocesses)
 - `golang.org/x/sync` is used for structured concurrency
 - Graceful shutdown with 15-second timeout on SIGINT/SIGTERM

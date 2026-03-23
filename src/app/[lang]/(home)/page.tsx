@@ -3,9 +3,9 @@ import { MessageSquare, Bot, Clock, Wrench } from 'lucide-react';
 
 const translations = {
   en: {
-    tagline: 'Run Claude as Your Digital Employees',
+    tagline: 'Run Claude Code as Your Digital Employees',
     description:
-      'OpenBee turns Claude AI into autonomous workers that communicate through Lark, DingTalk, WeCom, and Telegram. Multi-step task planning, persistent memory, and extensible MCP tools.',
+      'OpenBee turns Claude Code into autonomous workers that communicate through Lark, DingTalk, WeCom, and Telegram. Multi-step task planning, persistent memory, and extensible MCP tools.',
     getStarted: 'Get Started',
     developerDocs: 'Developer Docs',
     features: [
@@ -17,7 +17,7 @@ const translations = {
       {
         icon: Bot,
         title: 'AI Workers',
-        desc: 'Claude agents with persistent memory and autonomous execution',
+        desc: 'Claude Code agents with persistent memory and autonomous execution',
       },
       {
         icon: Clock,
@@ -32,9 +32,9 @@ const translations = {
     ],
   },
   cn: {
-    tagline: '将 Claude 作为你的数字员工运行',
+    tagline: '将 Claude Code 作为你的数字员工运行',
     description:
-      'OpenBee 将 Claude AI 变为自主工作者，通过飞书、钉钉、企业微信和 Telegram 进行沟通。支持多步骤任务规划、持久记忆和可扩展的 MCP 工具。',
+      'OpenBee 将 Claude Code 变为自主工作者，通过飞书、钉钉、企业微信和 Telegram 进行沟通。支持多步骤任务规划、持久记忆和可扩展的 MCP 工具。',
     getStarted: '快速开始',
     developerDocs: '开发者文档',
     features: [
@@ -46,7 +46,7 @@ const translations = {
       {
         icon: Bot,
         title: 'AI 工作者',
-        desc: '具有持久记忆和自主执行能力的 Claude 代理',
+        desc: '具有持久记忆和自主执行能力的 Claude Code 代理',
       },
       {
         icon: Clock,
