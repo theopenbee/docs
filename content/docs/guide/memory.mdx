@@ -1,0 +1,138 @@
+---
+title: Memory
+description: Manage global and worker memory through conversation
+---
+
+Memory is how OpenBee retains information across conversations. There are two types: **global memory** for system-wide knowledge, and **worker memory** for per-worker behavioral guidelines. Together, they let the Bee and workers learn from interactions and follow your preferences consistently.
+
+## Global Memory
+
+Global memory stores long-term knowledge that the Bee uses across all sessions and users. It includes things like user preferences, workflow insights, and learned patterns.
+
+### How It Works
+
+Every time you send a message, the Bee loads relevant memories to inform its decisions. When it discovers something worth remembering — a preference, a pattern, an insight — it saves it automatically.
+
+You can also manage memory explicitly through conversation:
+
+### Save a Memory
+
+> "Remember that I prefer concise replies"
+
+> "Save a note: our API uses snake_case naming"
+
+### View Memories
+
+> "What do you remember about me?"
+
+> "Show me all saved memories"
+
+### Delete a Memory
+
+> "Forget my language preference"
+
+> "Delete the memory about API naming"
+
+### Memory Structure
+
+Each memory entry has:
+
+| Field | Description |
+|-------|-------------|
+| **Key** | A descriptive identifier (e.g., `user_language_preference`) |
+| **Value** | The memory content |
+| **Scope** | `global` for system-wide, or a session identifier for user-specific |
+
+The Bee uses descriptive keys that serve as self-documentation, making memories easy to understand and manage.
+
+### Global vs. Session-Scoped
+
+- **Global** memories apply across all users and sessions — useful for universal insights
+- **Session-scoped** memories are specific to one user or conversation — useful for personal preferences
+
+The Bee decides the appropriate scope automatically based on context. A preference like "I work in the Shanghai timezone" is session-scoped, while an insight about general workflow patterns might be global.
+
+## Worker Memory
+
+Worker memory is different from global memory. It's a configuration field on each worker that defines persistent behavioral guidelines. Think of it as the worker's "personality and rules."
+
+### How It Works
+
+Worker memory is written into the worker's system prompt and applies to every task the worker handles. It doesn't change between conversations — it persists until you explicitly update it.
+
+### Set Worker Memory
+
+You set worker memory when creating or updating a worker:
+
+> "Create a worker named CodeBot with the memory: always follow PEP 8, prefer type hints, and write tests for every function"
+
+> "Update CodeBot's memory to include: use pytest instead of unittest"
+
+### View Worker Memory
+
+> "What's CodeBot's memory?"
+
+> "Show me the details of CodeBot"
+
+### Update Worker Memory
+
+> "Change CodeBot's memory to: focus on Go development, follow effective Go guidelines"
+
+> "Add to CodeBot's memory: always run linting before committing"
+
+### What to Put in Worker Memory
+
+Worker memory is ideal for:
+
+**Domain expertise:**
+> "You are an experienced Python developer. Always follow PEP 8 and prefer type hints."
+
+**Communication style:**
+> "Respond concisely in bullet points. Avoid long paragraphs."
+
+**Constraints and safety:**
+> "Never make breaking API changes without confirming with the user first."
+
+**Context and audience:**
+> "You are helping a non-technical user. Explain everything in simple terms."
+
+## Global Memory vs. Worker Memory
+
+| | Global Memory | Worker Memory |
+|---|---|---|
+| **Scope** | System-wide or per-session | Per-worker |
+| **Lifetime** | Permanent until deleted | Tied to the worker |
+| **Who reads it** | Bee (for decision-making) | The specific worker |
+| **Who writes it** | Bee (automatically or on request) | You (through worker creation/update) |
+| **Use case** | Preferences, insights, patterns | Behavioral rules, expertise, constraints |
+| **Managed via** | "Remember..." / "Forget..." | "Create/update worker with memory..." |
+
+## Best Practices
+
+### Let the Bee Learn Naturally
+
+The Bee proactively saves memories when it detects preferences or patterns. You don't need to explicitly tell it to remember everything — just interact naturally and it will pick up on recurring themes.
+
+### Use Explicit Memory for Important Preferences
+
+For critical preferences that you don't want to risk being missed, tell the Bee directly:
+
+> "Remember: always assign code review tasks to CodeBot"
+
+> "Remember: I prefer detailed explanations over brief answers"
+
+### Keep Worker Memory Focused
+
+Worker memory should be concise and relevant to the worker's role. Avoid stuffing too much information — focus on the rules and context that directly affect the worker's output quality.
+
+### Review and Clean Up Periodically
+
+Over time, memories may become outdated. Periodically review what's stored and clean up stale entries:
+
+> "Show me all memories"
+
+> "Delete the memory about the old API endpoint"
+
+### Use Memory Instead of Repeating Yourself
+
+If you find yourself repeating the same instruction across conversations, save it as a memory. This saves tokens and ensures consistent behavior.
