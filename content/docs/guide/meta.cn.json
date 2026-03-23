@@ -7,8 +7,6 @@
     "configuration",
     "platforms",
     "workers",
-    "tasks",
-    "memory",
     "web-console"
   ]
 }
