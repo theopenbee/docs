@@ -1,0 +1,89 @@
+---
+title: Tasks
+description: Create and manage tasks through conversation
+---
+
+Tasks are units of work assigned to workers. You can create and manage tasks by sending messages to the Bee (coordinator) in your IM platform — no API calls needed.
+
+## Task Types
+
+OpenBee supports three task types:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Immediate** | Execute as soon as the worker is available. This is the default. | "Assistant, write me a summary" |
+| **Countdown** | Execute at a specific time. | "Remind me at 3pm to join the meeting" |
+| **Scheduled** | Execute on a recurring schedule (cron). | "Check for new issues every weekday at 9am" |
+
+## Creating Tasks
+
+Simply describe what you need in your IM conversation. The Bee will understand your intent, select the right worker, and create the appropriate task.
+
+### Immediate Tasks
+
+Send a regular message and the Bee will create an immediate task for the matching worker:
+
+> "Assistant, write a summary of today's meeting notes"
+
+### Countdown Tasks
+
+Include a specific time and the Bee will create a countdown task:
+
+> "Remind me at 3pm to submit the report"
+
+> "At 5:30pm, send me the daily metrics"
+
+### Scheduled Tasks
+
+Describe a recurring schedule and the Bee will create a cron-based scheduled task:
+
+> "Every weekday at 9am, check for new issues and summarize them"
+
+> "Every hour, fetch the system status and report"
+
+Scheduled tasks use standard 5-field cron format (`minute hour day-of-month month day-of-week`) internally.
+
+## Worker Selection
+
+The Bee routes tasks to workers based on these rules (in priority order):
+
+1. **Explicit mention** — If you name a worker in your message, the task goes to that worker
+2. **Conversation continuation** — Follow-up messages go to the same worker as the previous task
+3. **Description matching** — The Bee matches your request against worker descriptions
+4. **Fallback** — If no worker matches, the Bee will suggest creating one
+
+## Querying Tasks
+
+Ask the Bee about task status through conversation:
+
+> "Show me all pending tasks"
+
+> "What tasks are running right now?"
+
+> "List scheduled tasks for Assistant"
+
+## Cancelling Tasks
+
+Ask the Bee to cancel a task:
+
+> "Cancel the daily report task"
+
+> "Stop the recurring issue check"
+
+## Task Lifecycle
+
+```
+pending → running → completed
+                  → failed
+pending → cancelled
+```
+
+| Status | Meaning |
+|--------|---------|
+| `pending` | Task is queued, waiting to be executed |
+| `running` | Task is currently being executed by a worker |
+| `completed` | Task finished successfully |
+| `failed` | Task encountered an error |
+| `cancelled` | Task was cancelled before execution |
+
+Scheduled (cron) tasks automatically re-schedule after each execution.
