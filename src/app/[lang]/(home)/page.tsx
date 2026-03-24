@@ -32,9 +32,9 @@ const translations = {
     ],
   },
   cn: {
-    tagline: '将 Claude Code 作为你的数字工作者运行',
+    tagline: '将 Claude Code 作为你的数字员工运行',
     description:
-      'OpenBee 将 Claude Code 变为自主工作者，通过飞书、钉钉、企业微信和 Telegram 进行沟通。支持多步骤任务规划、持久记忆和可扩展的 MCP 工具。',
+      'OpenBee 将 Claude Code 变为自主数字员工，通过飞书、钉钉、企业微信和 Telegram 进行沟通。支持多步骤任务规划、持久记忆和可扩展的 MCP 工具。',
     getStarted: '快速开始',
     developerDocs: '开发者文档',
     features: [
@@ -45,7 +45,7 @@ const translations = {
       },
       {
         icon: Bot,
-        title: 'AI 工作者',
+        title: 'AI 数字员工',
         desc: '具有持久记忆和自主执行能力的 Claude Code 代理',
       },
       {
@@ -56,7 +56,7 @@ const translations = {
       {
         icon: Wrench,
         title: 'MCP 工具',
-        desc: '可扩展的工具系统，增强工作者能力',
+        desc: '可扩展的工具系统，增强数字员工能力',
       },
     ],
   },
