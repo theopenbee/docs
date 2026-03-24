@@ -13,8 +13,31 @@ description: 设置飞书集成
 
 为应用添加以下权限：
 - `im:message` — 发送和接收消息
-- `im:message.group_at_msg` — 接收群内 @消息
+- `im:message.group_at_msg:readonly` — 接收群内 @消息
+- `im:message.p2p_msg:readonly` — 接收单聊消息
+- `im:message.reactions:write_only` — 添加消息表情回复
+- `im:message:send_as_bot` — 以机器人身份发送消息
 - `im:resource` — 访问媒体资源
+
+### 一键导入配置
+
+你也可以在飞书开放平台的应用权限页面使用**批量开通**功能，将以下 JSON 粘贴导入，即可一键完成权限配置：
+
+```json
+{
+  "scopes": {
+    "tenant": [
+      "im:message",
+      "im:message.group_at_msg:readonly",
+      "im:message.p2p_msg:readonly",
+      "im:message.reactions:write_only",
+      "im:message:send_as_bot",
+      "im:resource"
+    ],
+    "user": []
+  }
+}
+```
 
 ## 设置事件订阅
 
