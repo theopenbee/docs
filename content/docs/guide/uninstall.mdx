@@ -1,0 +1,90 @@
+---
+title: Uninstall
+description: Remove OpenBee from your system
+---
+
+## Remove the Binary
+
+### If installed via npm
+
+```bash
+npm uninstall -g openbee
+```
+
+### If installed via script or manual download
+
+Find and remove the binary:
+
+```bash
+# Find the binary location
+which openbee
+
+# Remove it (may require sudo)
+sudo rm /usr/local/bin/openbee
+
+# Or if installed to user directory
+rm ~/.local/bin/openbee
+```
+
+### If installed via Homebrew
+
+```bash
+brew uninstall theopenbee/tap/openbee
+```
+
+### If installed via Scoop
+
+```bash
+scoop uninstall openbee
+```
+
+## Remove Data and Configuration
+
+OpenBee stores its working data in `~/.openbee/`:
+
+| Directory | Description |
+|-----------|-------------|
+| `~/.openbee/worker/` | Worker working directories |
+| `~/.openbee/logs/` | Task execution logs |
+
+Remove all OpenBee data:
+
+```bash
+rm -rf ~/.openbee
+```
+
+## Remove the Configuration File
+
+The configuration file is created at the location you specified during setup (default: `config.yaml` in your working directory). Remove it manually:
+
+```bash
+rm config.yaml
+```
+
+## Remove the Database
+
+The database path is defined in your `config.yaml` under `database.path`. Remove the database directory:
+
+```bash
+# Default location (relative to where openbee was run)
+rm -rf ./data
+
+# Or the path specified in your config.yaml
+rm -rf /path/to/your/database
+```
+
+## Complete Cleanup
+
+To fully remove all traces of OpenBee:
+
+```bash
+# 1. Remove the binary
+sudo rm $(which openbee)
+
+# 2. Remove all data
+rm -rf ~/.openbee
+
+# 3. Remove config and database (adjust paths as needed)
+rm config.yaml
+rm -rf ./data
+```

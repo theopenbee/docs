@@ -1,0 +1,78 @@
+---
+title: Upgrade
+description: Upgrade OpenBee to the latest version
+---
+
+## Upgrade via Built-in Command
+
+OpenBee includes a built-in upgrade command that automatically downloads and installs the latest version:
+
+```bash
+openbee upgrade
+```
+
+This command will:
+1. Fetch the latest version from GitHub releases
+2. Download the appropriate binary for your platform
+3. Verify the SHA256 checksum
+4. Replace the existing binary in place
+
+To check if a new version is available without upgrading:
+
+```bash
+openbee upgrade --check
+```
+
+<Callout type="info">
+  If OpenBee is installed in a system directory (e.g., `/usr/local/bin`), you may need to run the upgrade command with `sudo`.
+</Callout>
+
+## Upgrade via npm
+
+If you installed OpenBee via npm, upgrade with:
+
+```bash
+npm update -g openbee
+```
+
+## Upgrade via Script
+
+Re-run the install script to upgrade to the latest version:
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/theopenbee/openbee/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/theopenbee/openbee/main/install.ps1 | iex
+```
+
+## Upgrade via Package Manager
+
+**macOS (Homebrew):**
+
+```bash
+brew upgrade theopenbee/tap/openbee
+```
+
+**Windows (Scoop):**
+
+```bash
+scoop update openbee
+```
+
+## Verify the Upgrade
+
+After upgrading, verify the new version:
+
+```bash
+openbee --version
+```
+
+<Callout type="warn">
+  The upgrade only updates the binary. Your configuration file and database are not modified. If a new version requires configuration changes, check the [release notes](https://github.com/theopenbee/openbee/releases) for migration instructions.
+</Callout>

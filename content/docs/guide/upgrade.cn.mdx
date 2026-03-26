@@ -1,0 +1,78 @@
+---
+title: 升级
+description: 将 OpenBee 升级到最新版本
+---
+
+## 通过内置命令升级
+
+OpenBee 内置了升级命令，可自动下载并安装最新版本：
+
+```bash
+openbee upgrade
+```
+
+该命令会：
+1. 从 GitHub Releases 获取最新版本信息
+2. 下载适合当前平台的二进制文件
+3. 验证 SHA256 校验和
+4. 原地替换现有二进制文件
+
+仅检查是否有新版本可用，不执行升级：
+
+```bash
+openbee upgrade --check
+```
+
+<Callout type="info">
+  如果 OpenBee 安装在系统目录（如 `/usr/local/bin`），升级时可能需要使用 `sudo`。
+</Callout>
+
+## 通过 npm 升级
+
+如果通过 npm 安装，使用以下命令升级：
+
+```bash
+npm update -g openbee
+```
+
+## 通过脚本升级
+
+重新运行安装脚本即可升级到最新版本：
+
+**macOS / Linux：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/theopenbee/openbee/main/install.sh | bash
+```
+
+**Windows (PowerShell)：**
+
+```powershell
+irm https://raw.githubusercontent.com/theopenbee/openbee/main/install.ps1 | iex
+```
+
+## 通过包管理器升级
+
+**macOS (Homebrew)：**
+
+```bash
+brew upgrade theopenbee/tap/openbee
+```
+
+**Windows (Scoop)：**
+
+```bash
+scoop update openbee
+```
+
+## 验证升级结果
+
+升级完成后，验证新版本：
+
+```bash
+openbee --version
+```
+
+<Callout type="warn">
+  升级仅会更新二进制文件，不会修改你的配置文件和数据库。如果新版本需要配置变更，请查阅 [发布说明](https://github.com/theopenbee/openbee/releases) 了解迁移说明。
+</Callout>

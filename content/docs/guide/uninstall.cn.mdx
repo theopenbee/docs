@@ -1,0 +1,90 @@
+---
+title: 卸载
+description: 从系统中移除 OpenBee
+---
+
+## 删除二进制文件
+
+### 通过 npm 安装的
+
+```bash
+npm uninstall -g openbee
+```
+
+### 通过脚本或手动安装的
+
+找到并删除二进制文件：
+
+```bash
+# 查找二进制文件位置
+which openbee
+
+# 删除（可能需要 sudo）
+sudo rm /usr/local/bin/openbee
+
+# 如果安装在用户目录
+rm ~/.local/bin/openbee
+```
+
+### 通过 Homebrew 安装的
+
+```bash
+brew uninstall theopenbee/tap/openbee
+```
+
+### 通过 Scoop 安装的
+
+```bash
+scoop uninstall openbee
+```
+
+## 删除数据和配置
+
+OpenBee 的运行数据存储在 `~/.openbee/` 目录下：
+
+| 目录 | 说明 |
+|------|------|
+| `~/.openbee/worker/` | 数字员工工作目录 |
+| `~/.openbee/logs/` | 任务执行日志 |
+
+删除所有 OpenBee 数据：
+
+```bash
+rm -rf ~/.openbee
+```
+
+## 删除配置文件
+
+配置文件保存在你初始化时指定的位置（默认为当前工作目录下的 `config.yaml`），手动删除即可：
+
+```bash
+rm config.yaml
+```
+
+## 删除数据库
+
+数据库路径在 `config.yaml` 的 `database.path` 中定义。删除数据库目录：
+
+```bash
+# 默认位置（相对于运行 openbee 的目录）
+rm -rf ./data
+
+# 或者 config.yaml 中指定的路径
+rm -rf /path/to/your/database
+```
+
+## 完整清理
+
+彻底移除 OpenBee 的所有文件：
+
+```bash
+# 1. 删除二进制文件
+sudo rm $(which openbee)
+
+# 2. 删除所有数据
+rm -rf ~/.openbee
+
+# 3. 删除配置文件和数据库（根据实际路径调整）
+rm config.yaml
+rm -rf ./data
+```

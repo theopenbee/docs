@@ -3,6 +3,8 @@
   "pages": [
     "index",
     "installation",
+    "upgrade",
+    "uninstall",
     "quick-start",
     "configuration",
     "platforms",
