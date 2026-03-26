@@ -1,6 +1,7 @@
 import './global.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html className={inter.className} suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen">{children}</body>
+      <body className="flex flex-col min-h-screen">{children}<Analytics /></body>
     </html>
   );
 }
