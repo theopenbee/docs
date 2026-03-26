@@ -73,6 +73,14 @@ After upgrading, verify the new version:
 openbee --version
 ```
 
+## Update Configuration
+
+After upgrading the binary, run the following command to update your system configuration, as new versions may introduce configuration changes:
+
+```bash
+openbee config
+```
+
 <Callout type="warn">
-  The upgrade only updates the binary. Your configuration file and database are not modified. If a new version requires configuration changes, check the [release notes](https://github.com/theopenbee/openbee/releases) for migration instructions.
+  The upgrade only updates the binary. Your configuration file and database are not modified. Always run `openbee config` after upgrading to ensure your configuration is up to date with the new version.
 </Callout>

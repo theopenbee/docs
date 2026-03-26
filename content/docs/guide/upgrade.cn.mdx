@@ -73,6 +73,14 @@ scoop update openbee
 openbee --version
 ```
 
+## 更新系统配置
+
+升级二进制文件后，还需要执行以下命令更新系统配置，因为程序升级可能带来配置变动：
+
+```bash
+openbee config
+```
+
 <Callout type="warn">
-  升级仅会更新二进制文件，不会修改你的配置文件和数据库。如果新版本需要配置变更，请查阅 [发布说明](https://github.com/theopenbee/openbee/releases) 了解迁移说明。
+  升级仅会更新二进制文件，不会自动修改你的配置文件。请在每次升级后执行 `openbee config`，以确保配置与新版本保持同步。
 </Callout>
