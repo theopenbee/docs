@@ -83,7 +83,7 @@ useradd -m openbee
 
 # 切换到该用户并启动 OpenBee
 su - openbee
-openbee start
+openbee server -d
 ```
 
 如果你已经以非 root 用户登录，请确保启动 OpenBee 时没有使用 `sudo`。
