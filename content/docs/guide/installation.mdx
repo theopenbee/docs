@@ -62,3 +62,28 @@ openbee --version
 ```
 
 You should see the version number, commit hash, and build date.
+
+## Troubleshooting
+
+### Claude Code Cannot Run as Root User
+
+If you see the following error when starting a Claude Code worker:
+
+```
+dangerously-skip-permissions cannot be used with root/sudo privileges for security reasons
+```
+
+This is a security restriction enforced by Claude Code — it refuses to run with `--dangerously-skip-permissions` under root or sudo privileges.
+
+**Solution:** Run OpenBee as a non-root user.
+
+```bash
+# Create a dedicated user (e.g., openbee)
+useradd -m openbee
+
+# Switch to that user and run OpenBee
+su - openbee
+openbee start
+```
+
+Alternatively, if you are already logged in as a non-root user, make sure you are not using `sudo` to start OpenBee.

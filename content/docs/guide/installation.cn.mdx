@@ -62,3 +62,28 @@ openbee --version
 ```
 
 你应该能看到版本号、提交哈希和构建日期。
+
+## 常见问题
+
+### Claude Code 不能以 root 用户运行
+
+如果在启动 Claude Code 数字员工时看到以下报错：
+
+```
+dangerously-skip-permissions cannot be used with root/sudo privileges for security reasons
+```
+
+这是 Claude Code 的安全限制——它拒绝在 root 或 sudo 权限下使用 `--dangerously-skip-permissions` 运行。
+
+**解决方案：** 使用非 root 用户运行 OpenBee。
+
+```bash
+# 创建专用用户（例如 openbee）
+useradd -m openbee
+
+# 切换到该用户并启动 OpenBee
+su - openbee
+openbee start
+```
+
+如果你已经以非 root 用户登录，请确保启动 OpenBee 时没有使用 `sudo`。
