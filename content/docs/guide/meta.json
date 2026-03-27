@@ -12,6 +12,7 @@
     "tasks",
     "sessions",
     "memory",
-    "web-console"
+    "web-console",
+    "use-cases"
   ]
 }

@@ -1,0 +1,48 @@
+---
+title: Use Cases
+description: Real-world examples of what you can build with OpenBee
+---
+
+This page shows practical examples of workers you can create to extend OpenBee's capabilities.
+
+## Execute Shell Commands via IM
+
+This example shows how to run shell commands directly from your IM app by sending messages to a dedicated worker.
+
+### Create the Worker
+
+Open the web console and go to the **Workers** page.
+
+Click **Create Worker** and fill in the following fields:
+
+| Field | Value |
+|-------|-------|
+| **Name** | Sham |
+| **Description** | If the message sent is a command, hand it to me for execution |
+| **Memory** | Execute the command sent by the user and send the result back to the user |
+
+Or create it directly through the Bee in your IM app:
+
+> "Create a worker named Sham. Description: If the message sent is a command, hand it to me for execution. Memory: Execute the command sent by the user and send the result back to the user"
+
+### How It Works
+
+Once Sham is set up, the Bee will automatically route command-like messages to Sham based on the description. Sham's memory instructs it to run the command and reply with the output.
+
+### Send a Command
+
+In your IM app, send a message like:
+
+> `ls -la ~/Documents`
+
+> `df -h`
+
+> `git log --oneline -10`
+
+Sham will execute the command in its working directory and return the output.
+
+### Tips
+
+- To run commands in a specific directory, set Sham's **Work Directory** to that path when creating the worker.
+- You can address Sham directly by name to ensure your message goes to it: `"Sham, ps aux | grep node"`
+- To restrict which commands are allowed, add constraints to Sham's memory, e.g.: `"Only execute read-only commands. Never run rm, sudo, or any destructive operations."`
