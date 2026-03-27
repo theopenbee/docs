@@ -1,0 +1,63 @@
+---
+title: Control Claude Code via IM for Project Development
+description: Use a dedicated worker to drive Claude Code development tasks directly from your IM app
+---
+
+This example shows how to control Claude Code for project development by chatting with a dedicated worker in your IM app.
+
+## Create the Worker
+
+Open the web console and go to the **Workers** page.
+
+Click **Create Worker** and fill in the following fields:
+
+| Field | Value |
+|-------|-------|
+| **Name** | Libai |
+| **Description** | Responsible for the development of the XYZ project |
+| **Memory** | *(leave empty)* |
+| **Work Directory** | `/path/to/your/project` |
+
+Setting the **Work Directory** is essential — it tells Claude Code which project to operate in.
+
+Or create it directly through the Bee in your IM app:
+
+> "Create a worker named Libai. Description: Responsible for the development of the XYZ project. Work directory: /path/to/your/project"
+
+## How It Works
+
+Once Libai is set up, the Bee will route project-related messages to Libai based on the description. Libai runs Claude Code in the configured work directory and replies with results.
+
+## Chat to Drive Development
+
+In your IM app, send messages like:
+
+> "Libai, walk me through the requirements for the user authentication module."
+
+> "Libai, implement the login API endpoint."
+
+> "Libai, run the tests and show me the results."
+
+Libai will execute the task using Claude Code in the project directory and report back.
+
+## Important: Add `.openbee.md` to `.gitignore`
+
+OpenBee automatically generates a `.openbee.md` file in the worker's work directory to store context and memory. You should exclude this file from version control:
+
+```
+echo ".openbee.md" >> /path/to/your/project/.gitignore
+```
+
+Or add it manually to your project's `.gitignore`:
+
+```
+# OpenBee worker context
+.openbee.md
+```
+
+## Tips
+
+- **Name your workers after their project** — clear names like "Libai" or "BackendDev" help the Bee route messages accurately.
+- **Address the worker by name** to make sure your message goes to the right worker: `"Libai, what's the current status of the auth module?"`
+- **Use memory for standing instructions** — for example, set Libai's memory to `"Always write tests alongside implementation. Follow the existing code style."` to enforce project conventions automatically.
+- You can create multiple workers for different projects or different roles within the same project (e.g. one for frontend, one for backend).
