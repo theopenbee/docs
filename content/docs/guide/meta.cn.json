@@ -4,6 +4,7 @@
     "index",
     "installation",
     "upgrade",
+    "backup",
     "uninstall",
     "quick-start",
     "configuration",

@@ -1,0 +1,139 @@
+---
+title: Backup & Restore
+description: Back up and restore OpenBee data, including the database, configuration, and state files
+---
+
+## Overview
+
+The `openbee backup` and `openbee restore` commands let you create and restore complete snapshots of your OpenBee installation. A backup archive includes:
+
+- **openbee.db** — the main database
+- **config.yaml** — your configuration file
+- **~/.openbee/** — runtime state (logs, PID file, etc.)
+
+Backups can optionally be encrypted with a password using AES-256-GCM.
+
+---
+
+## Backup
+
+### Syntax
+
+```bash
+openbee backup [output-dir] [flags]
+```
+
+### Arguments
+
+| Argument | Description | Default |
+|---|---|---|
+| `output-dir` | Directory where the backup archive will be written | `.` (current directory) |
+
+### Flags
+
+| Flag | Description | Default |
+|---|---|---|
+| `-c, --config <path>` | Path to the config file | `config.yaml` |
+| `--password <password>` | Encrypt the backup archive with this password | *(none — no encryption)* |
+
+### Output file naming
+
+- **Unencrypted:** `openbee-backup-YYYYMMDD-HHMMSS.tar.gz`
+- **Encrypted:** `openbee-backup-YYYYMMDD-HHMMSS.tar.gz.enc`
+
+### Examples
+
+```bash
+# Back up to the current directory
+openbee backup
+
+# Back up to a specific directory
+openbee backup /path/to/backups
+
+# Back up with encryption
+openbee backup --password "my-secure-password" /path/to/backups
+
+# Use a custom config file
+openbee backup -c /etc/openbee/config.yaml /path/to/backups
+```
+
+<Callout type="info">
+  Encrypted backup archives are written with `0600` permissions (owner read/write only). Store your password securely — without it, the backup cannot be decrypted.
+</Callout>
+
+---
+
+## Restore
+
+### Syntax
+
+```bash
+openbee restore <backup-file> [flags]
+```
+
+### Arguments
+
+| Argument | Description |
+|---|---|
+| `backup-file` | Path to the backup archive (`.tar.gz` or `.tar.gz.enc`) — **required** |
+
+### Flags
+
+| Flag | Description | Default |
+|---|---|---|
+| `-c, --config <path>` | Path to the config file | `config.yaml` |
+| `--password <password>` | Password to decrypt an encrypted backup | *(required for `.tar.gz.enc` files)* |
+| `--force` | Overwrite existing data if the database already exists | `false` |
+
+### Behavior
+
+1. If the OpenBee daemon is running, it is automatically stopped before the restore begins.
+2. All files extracted from the archive are verified against SHA256 checksums stored in the archive's manifest. If any checksum fails, the restore is aborted.
+3. If the backup was created with a different version of OpenBee, a warning is printed but the restore continues.
+
+### Examples
+
+```bash
+# Restore from an unencrypted backup
+openbee restore /path/to/backups/openbee-backup-20260330-143000.tar.gz
+
+# Restore from an encrypted backup
+openbee restore --password "my-secure-password" /path/to/backups/openbee-backup-20260330-143000.tar.gz.enc
+
+# Force overwrite existing data
+openbee restore --force /path/to/backups/openbee-backup-20260330-143000.tar.gz
+
+# Use a custom config file path
+openbee restore -c /etc/openbee/config.yaml /path/to/backup.tar.gz
+```
+
+<Callout type="warn">
+  Without `--force`, the restore command will fail if a database file already exists at the configured path. Use `--force` to intentionally overwrite existing data.
+</Callout>
+
+---
+
+## Recommended Backup Workflow
+
+A simple approach for regular backups is to run the backup command on a schedule and keep a rolling set of archives:
+
+```bash
+# Create a daily backup in a dedicated directory
+openbee backup ~/openbee-backups
+
+# List available backups
+ls -lh ~/openbee-backups/
+```
+
+To migrate OpenBee to a new machine:
+
+1. Create a backup on the old machine:
+   ```bash
+   openbee backup --password "secret" ~/openbee-backups
+   ```
+2. Transfer the archive to the new machine.
+3. Install OpenBee on the new machine.
+4. Restore the backup:
+   ```bash
+   openbee restore --password "secret" ~/openbee-backups/openbee-backup-YYYYMMDD-HHMMSS.tar.gz.enc
+   ```

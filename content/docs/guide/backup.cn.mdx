@@ -1,0 +1,139 @@
+---
+title: 备份与恢复
+description: 备份和恢复 OpenBee 数据，包括数据库、配置文件和状态文件
+---
+
+## 概述
+
+`openbee backup` 和 `openbee restore` 命令用于创建和恢复 OpenBee 的完整数据快照。备份归档文件包含以下内容：
+
+- **openbee.db** — 主数据库文件
+- **config.yaml** — 配置文件
+- **~/.openbee/** — 运行时状态（日志、PID 文件等）
+
+备份文件可以使用密码进行加密（AES-256-GCM 算法）。
+
+---
+
+## 备份命令
+
+### 语法
+
+```bash
+openbee backup [output-dir] [flags]
+```
+
+### 参数
+
+| 参数 | 说明 | 默认值 |
+|---|---|---|
+| `output-dir` | 备份归档文件的输出目录 | `.`（当前目录） |
+
+### 选项
+
+| 选项 | 说明 | 默认值 |
+|---|---|---|
+| `-c, --config <path>` | 配置文件路径 | `config.yaml` |
+| `--password <password>` | 使用该密码对备份文件进行加密 | *(无 — 不加密)* |
+
+### 输出文件命名规则
+
+- **未加密：** `openbee-backup-YYYYMMDD-HHMMSS.tar.gz`
+- **加密：** `openbee-backup-YYYYMMDD-HHMMSS.tar.gz.enc`
+
+### 使用示例
+
+```bash
+# 备份到当前目录
+openbee backup
+
+# 备份到指定目录
+openbee backup /path/to/backups
+
+# 加密备份
+openbee backup --password "my-secure-password" /path/to/backups
+
+# 使用自定义配置文件
+openbee backup -c /etc/openbee/config.yaml /path/to/backups
+```
+
+<Callout type="info">
+  加密备份文件的权限为 `0600`（仅文件所有者可读写）。请妥善保管密码——没有密码将无法解密备份文件。
+</Callout>
+
+---
+
+## 恢复命令
+
+### 语法
+
+```bash
+openbee restore <backup-file> [flags]
+```
+
+### 参数
+
+| 参数 | 说明 |
+|---|---|
+| `backup-file` | 备份归档文件路径（`.tar.gz` 或 `.tar.gz.enc`）— **必填** |
+
+### 选项
+
+| 选项 | 说明 | 默认值 |
+|---|---|---|
+| `-c, --config <path>` | 配置文件路径 | `config.yaml` |
+| `--password <password>` | 解密加密备份所需的密码 | *(恢复 `.tar.gz.enc` 文件时必填)* |
+| `--force` | 若数据库已存在，强制覆盖现有数据 | `false` |
+
+### 恢复行为
+
+1. 如果 OpenBee 守护进程正在运行，恢复操作开始前会自动停止该进程。
+2. 从归档文件中提取的所有文件都会与归档内 manifest 中保存的 SHA256 校验和进行验证，如果任何文件校验失败，恢复操作将中止。
+3. 如果备份文件由不同版本的 OpenBee 创建，系统会打印警告信息，但恢复操作仍会继续。
+
+### 使用示例
+
+```bash
+# 从未加密的备份中恢复
+openbee restore /path/to/backups/openbee-backup-20260330-143000.tar.gz
+
+# 从加密的备份中恢复
+openbee restore --password "my-secure-password" /path/to/backups/openbee-backup-20260330-143000.tar.gz.enc
+
+# 强制覆盖现有数据
+openbee restore --force /path/to/backups/openbee-backup-20260330-143000.tar.gz
+
+# 使用自定义配置文件路径
+openbee restore -c /etc/openbee/config.yaml /path/to/backup.tar.gz
+```
+
+<Callout type="warn">
+  不使用 `--force` 时，如果配置路径下已存在数据库文件，恢复命令将会失败。使用 `--force` 可强制覆盖现有数据。
+</Callout>
+
+---
+
+## 推荐备份工作流
+
+可以定期运行备份命令并保留一批归档文件，以下是一个简单的示例：
+
+```bash
+# 将每日备份存储到专用目录
+openbee backup ~/openbee-backups
+
+# 查看已有备份列表
+ls -lh ~/openbee-backups/
+```
+
+将 OpenBee 迁移到新机器的步骤：
+
+1. 在旧机器上创建备份：
+   ```bash
+   openbee backup --password "secret" ~/openbee-backups
+   ```
+2. 将备份文件传输到新机器。
+3. 在新机器上安装 OpenBee。
+4. 恢复备份：
+   ```bash
+   openbee restore --password "secret" ~/openbee-backups/openbee-backup-YYYYMMDD-HHMMSS.tar.gz.enc
+   ```
