@@ -13,6 +13,10 @@ The `openbee backup` and `openbee restore` commands let you create and restore c
 
 Backups can optionally be encrypted with a password using AES-256-GCM.
 
+<Callout type="warn">
+  **Cross-platform limitation:** Backup archives created on Windows cannot be restored on Linux or macOS, and vice versa. Always restore a backup on the same operating system family it was created on.
+</Callout>
+
 ---
 
 ## Backup
