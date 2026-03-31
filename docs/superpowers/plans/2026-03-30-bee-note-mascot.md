@@ -41,7 +41,7 @@ export function BeeNote({ children }: { children: ReactNode }) {
       <div className="flex items-center gap-1.5 mb-2 text-amber-700 font-medium text-sm dark:text-amber-400">
         🐝 小蜜蜂
       </div>
-      <div className="text-sm text-amber-900 dark:text-amber-100 [&>p]:mb-0 [&>p:last-child]:mb-0">
+      <div className="text-sm text-amber-900 dark:text-amber-100 [&>p]:mb-0">
         {children}
       </div>
     </div>
