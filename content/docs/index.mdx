@@ -33,17 +33,24 @@ graph TD
     end
 
     subgraph EXEC["🤖 Execution Layer"]
-        C["Digital Workers\nClaude Code Agents"]
+        C1["Worker 1"]
+        C2["Worker 2"]
+        C3["Worker N"]
     end
 
     IM --> SCHED
-    SCHED --> EXEC
-    EXEC -. "Reply Results" .-> IM
+    SCHED -. "Reply Message" .-> IM
+    SCHED --> C1
+    SCHED --> C2
+    SCHED --> C3
+    C1 -. "Reply Results" .-> IM
+    C2 -. "Reply Results" .-> IM
+    C3 -. "Reply Results" .-> IM
 ```
 
-- **IM Layer (Communication)**: Users send messages via Lark, DingTalk, WeCom, WeChat, or Telegram. OpenBee connects to each platform's messaging interface.
-- **Scheduling Layer**: Receives messages from the IM layer, interprets task intent, and dispatches tasks to the appropriate digital workers.
-- **Execution Layer**: Workers receive tasks and use Claude Code to plan and execute them autonomously, then return results to the user.
+- **IM Layer (Communication)**: The topmost layer and the entry point for all user interactions. Users send messages via Lark, DingTalk, WeCom, WeChat, or Telegram, which are passed down to the scheduling layer.
+- **Scheduling Layer**: Receives messages from the IM layer and takes one of two paths: reply directly back to the IM layer (e.g., for simple queries), or dispatch tasks to workers in the execution layer. The scheduling layer can manage multiple workers simultaneously, enabling parallel task processing.
+- **Execution Layer**: Composed of multiple independent workers, each a Claude Code agent capable of multi-step planning and autonomous execution. Once a task is complete, each worker sends results directly back to the IM layer for delivery to the user.
 
 ## Next Steps
 
