@@ -16,17 +16,34 @@ OpenBee is a digital worker solution that runs Claude Code as autonomous workers
 
 ## How It Works
 
+OpenBee uses a three-layer architecture that cleanly separates communication, scheduling, and execution:
+
 ```mermaid
 graph TD
-    A["💬 IM Platforms\nLark / DingTalk / WeCom / WeChat / Telegram"] --> B["🔌 Platform Integration Layer"]
-    B --> C["🧠 Central Brain\nClaude Code"]
-    C --> D["📨 Task Assignment"]
-    D --> E["🤖 Workers — Digital Employees\nClaude Code Agents"]
-    E -. "Reply Results" .-> A
-    C -. "Reply Results" .-> A
+    subgraph IM["💬 IM Layer (Communication)"]
+        A1["Lark (Feishu)"]
+        A2["DingTalk"]
+        A3["WeCom"]
+        A4["WeChat"]
+        A5["Telegram"]
+    end
+
+    subgraph SCHED["📋 Scheduling Layer"]
+        B["Task Scheduling & Dispatch"]
+    end
+
+    subgraph EXEC["🤖 Execution Layer"]
+        C["Digital Workers\nClaude Code Agents"]
+    end
+
+    IM --> SCHED
+    SCHED --> EXEC
+    EXEC -. "Reply Results" .-> IM
 ```
 
-Users send messages through their IM platform. OpenBee routes messages to the appropriate worker, which uses Claude Code to plan and execute tasks. Workers can invoke MCP tools, manage their own memory, and schedule follow-up tasks.
+- **IM Layer (Communication)**: Users send messages via Lark, DingTalk, WeCom, WeChat, or Telegram. OpenBee connects to each platform's messaging interface.
+- **Scheduling Layer**: Receives messages from the IM layer, interprets task intent, and dispatches tasks to the appropriate digital workers.
+- **Execution Layer**: Workers receive tasks and use Claude Code to plan and execute them autonomously, then return results to the user.
 
 ## Next Steps
 
