@@ -39,13 +39,9 @@ graph TD
     end
 
     IM --> SCHED
-    SCHED -. "Reply Message" .-> IM
-    SCHED --> C1
-    SCHED --> C2
-    SCHED --> C3
-    C1 -. "Reply Results" .-> IM
-    C2 -. "Reply Results" .-> IM
-    C3 -. "Reply Results" .-> IM
+    SCHED --> EXEC
+    SCHED -. "Direct Reply" .-> IM
+    EXEC -. "Reply Results" .-> IM
 ```
 
 - **IM Layer (Communication)**: The topmost layer and the entry point for all user interactions. Users send messages via Lark, DingTalk, WeCom, WeChat, or Telegram, which are passed down to the scheduling layer.

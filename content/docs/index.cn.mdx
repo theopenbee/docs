@@ -39,13 +39,9 @@ graph TD
     end
 
     IM --> SCHED
-    SCHED -. "回复消息" .-> IM
-    SCHED --> C1
-    SCHED --> C2
-    SCHED --> C3
-    C1 -. "回复结果" .-> IM
-    C2 -. "回复结果" .-> IM
-    C3 -. "回复结果" .-> IM
+    SCHED --> EXEC
+    SCHED -. "直接回复" .-> IM
+    EXEC -. "回复结果" .-> IM
 ```
 
 - **IM 层（通讯层）**：位于最顶层，是用户与系统交互的入口。用户通过飞书、钉钉、企业微信、微信或 Telegram 发送消息，消息向下传递给调度层处理。
