@@ -16,37 +16,21 @@ OpenBee is a digital worker solution that runs Claude Code as autonomous workers
 
 ## How It Works
 
-OpenBee uses a three-layer architecture that cleanly separates communication, scheduling, and execution:
-
 ```mermaid
 graph TD
-    subgraph IM["💬 IM Layer (Communication)"]
-        A1["Lark (Feishu)"]
-        A2["DingTalk"]
-        A3["WeCom"]
-        A4["WeChat"]
-        A5["Telegram"]
-    end
-
-    subgraph SCHED["📋 Scheduling Layer"]
-        B["Task Scheduling & Dispatch"]
-    end
-
-    subgraph EXEC["🤖 Execution Layer"]
-        C1["Worker 1"]
-        C2["Worker 2"]
-        C3["Worker N"]
-    end
-
-    IM --> SCHED
-    SCHED --> EXEC
-    SCHED -. "Direct Reply" .-> IM
-    EXEC -. "Reply Results" .-> IM
+    A["💬 IM Platforms\nLark / DingTalk / WeCom / WeChat / Telegram"] --> B["🔌 Platform Integration Layer"]
+    B --> C["🧠 Central Brain\nClaude Code"]
+    C --> D["📨 Task Assignment"]
+    D --> E["🤖 Workers — Digital Workers\nClaude Code Agents"]
+    E -. "Reply Results" .-> A
+    C -. "Reply Results" .-> A
 ```
 
-- **IM Layer (Communication)**: The topmost layer and the entry point for all user interactions. Users send messages via Lark, DingTalk, WeCom, WeChat, or Telegram, which are passed down to the scheduling layer.
-- **Scheduling Layer**: Receives messages from the IM layer and takes one of two paths: reply directly back to the IM layer (e.g., for simple queries), or dispatch tasks to workers in the execution layer. The scheduling layer can manage multiple workers simultaneously, enabling parallel task processing.
-- **Execution Layer**: Composed of multiple independent workers, each a Claude Code agent capable of multi-step planning and autonomous execution. Once a task is complete, each worker sends results directly back to the IM layer for delivery to the user.
+- **IM Platforms**: Lark, DingTalk, WeCom, WeChat, and Telegram — the entry point for user conversations, with messages routed into the system via the Platform Integration Layer.
+- **Platform Integration Layer**: Handles protocol translation and message routing across all supported IM platforms, forwarding messages to the Central Brain.
+- **Central Brain (Claude Code)**: The system's core intelligence. Simple requests are answered directly back to the IM platforms; complex tasks are broken down into instructions and passed to Task Assignment.
+- **Task Assignment**: Dispatches specific tasks to the appropriate digital workers for execution.
+- **Workers (Digital Workers)**: Independent Claude Code agents that receive tasks, perform multi-step planning and autonomous execution, then send results back to the IM platforms.
 
 ## Next Steps
 
