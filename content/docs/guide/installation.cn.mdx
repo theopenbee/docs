@@ -9,10 +9,6 @@ description: 在你的系统上安装 OpenBee
 - **Go 1.25+**（仅从源码构建时需要）
 - **Node.js 20+**（仅从源码构建时需要）
 
-<BeeNote>
-  安装完 Claude Code CLI 之后记得运行 `claude login` 完成登录，不然 OpenBee 启动后数字员工跑不起来 — 这个坑踩的人不少 🐝
-</BeeNote>
-
 ## 通过 npm 安装
 
 ```bash
@@ -47,7 +43,6 @@ scoop install openbee
 ```bash
 git clone https://github.com/theopenbee/openbee.git
 cd openbee
-make web    # 构建前端资源
 make build  # 构建二进制文件
 ```
 
