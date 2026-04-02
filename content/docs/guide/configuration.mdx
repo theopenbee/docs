@@ -8,6 +8,8 @@ OpenBee uses a YAML configuration file. Generate one interactively with `openbee
 ## Full Example
 
 ```yaml
+language: en
+
 server:
   port: 8080
   host: localhost
@@ -27,7 +29,8 @@ bee:
     path: claude
     timeout: 30m
   mcp:
-    api_key: "your-api-key"
+    token_secret: ""
+    token_ttl: 2h
   platforms:
     feishu:
       enabled: false
@@ -57,11 +60,18 @@ bee:
       max_media_size: 104857600
   feeder:
     timeout: 5m
+    max_concurrent_bee: 5
   media:
     ffprobe_path: ffprobe
     ffmpeg_path: ffmpeg
-  message_debounce: 3s
+  message_debounce: 300ms
 ```
+
+## Language
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `language` | string | — | Interface language. Accepted values: `en`, `zh`. If not set, language is auto-detected from the system locale. |
 
 ## Server
 
@@ -100,7 +110,8 @@ JWT-based authentication for the web UI. Authentication is optional — it is on
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bee.mcp.api_key` | string | — | API key for MCP server authentication. Required for MCP tools to function. |
+| `bee.mcp.token_secret` | string | — | HMAC-SHA256 secret for signing MCP tokens. Auto-generated on startup if not set. |
+| `bee.mcp.token_ttl` | duration | `2h` | MCP token validity period. |
 
 ## Platforms
 
@@ -135,6 +146,7 @@ See [Platform Setup](/docs/guide/platforms) for detailed configuration of each p
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `bee.feeder.timeout` | duration | `5m` | Bee (coordinator) feeding timeout |
+| `bee.feeder.max_concurrent_bee` | integer | `5` | Maximum number of Bee instances that can run concurrently |
 
 ## Media
 
@@ -147,4 +159,4 @@ See [Platform Setup](/docs/guide/platforms) for detailed configuration of each p
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bee.message_debounce` | duration | `3s` | Time window to aggregate multiple rapid messages into one |
+| `bee.message_debounce` | duration | `300ms` | Time window to aggregate multiple rapid messages into one |

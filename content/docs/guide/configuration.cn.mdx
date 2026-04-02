@@ -8,6 +8,8 @@ OpenBee 使用 YAML 配置文件。可以通过 `openbee config` 交互式生成
 ## 完整示例
 
 ```yaml
+language: zh
+
 server:
   port: 8080
   host: localhost
@@ -27,7 +29,8 @@ bee:
     path: claude
     timeout: 30m
   mcp:
-    api_key: "your-api-key"
+    token_secret: ""
+    token_ttl: 2h
   platforms:
     feishu:
       enabled: false
@@ -57,11 +60,18 @@ bee:
       max_media_size: 104857600
   feeder:
     timeout: 5m
+    max_concurrent_bee: 5
   media:
     ffprobe_path: ffprobe
     ffmpeg_path: ffmpeg
-  message_debounce: 3s
+  message_debounce: 300ms
 ```
+
+## 语言
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `language` | string | — | 界面语言。可选值：`en`、`zh`。未设置时根据系统语言自动检测。 |
 
 ## 服务器
 
@@ -100,7 +110,8 @@ bee:
 
 | 字段 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
-| `bee.mcp.api_key` | string | — | MCP 服务器认证 API 密钥。MCP 工具正常运行所必需。 |
+| `bee.mcp.token_secret` | string | — | 用于签发 MCP 令牌的 HMAC-SHA256 密钥。未设置时启动时自动生成。 |
+| `bee.mcp.token_ttl` | duration | `2h` | MCP 令牌有效期。 |
 
 ## 平台
 
@@ -135,6 +146,7 @@ bee:
 | 字段 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
 | `bee.feeder.timeout` | duration | `5m` | 蜂巢（协调器）投喂超时时间 |
+| `bee.feeder.max_concurrent_bee` | integer | `5` | 最大并发 Bee 实例数 |
 
 ## 媒体
 
@@ -147,4 +159,4 @@ bee:
 
 | 字段 | 类型 | 默认值 | 描述 |
 |------|------|--------|------|
-| `bee.message_debounce` | duration | `3s` | 将多条快速消息聚合为一条的时间窗口 |
+| `bee.message_debounce` | duration | `300ms` | 将多条快速消息聚合为一条的时间窗口 |
