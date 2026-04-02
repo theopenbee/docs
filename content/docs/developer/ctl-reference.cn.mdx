@@ -1,0 +1,295 @@
+---
+title: CLI 参考
+description: openbee ctl 命令行工具完整参考手册
+---
+
+`openbee ctl` 是用于控制运行中的 openbee 服务器的命令行工具。所有子命令均通过已配置的 API 与本地服务器通信。
+
+**全局参数**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--config`、`-c` | string | `config.yaml` | 配置文件路径 |
+
+---
+
+## worker
+
+管理 Worker 代理。
+
+### worker list
+
+列出所有已注册的 Worker。
+
+```bash
+openbee ctl worker list
+```
+
+### worker get
+
+根据 ID 获取 Worker 详情。
+
+```bash
+openbee ctl worker get <id>
+```
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `id` | 是 | Worker UUID |
+
+### worker status
+
+获取 Worker 的当前状态。
+
+```bash
+openbee ctl worker status <id>
+```
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `id` | 是 | Worker UUID |
+
+### worker create
+
+创建一个新的 Worker。
+
+```bash
+openbee ctl worker create --name <name> [flags]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--name`、`-n` | string | 是 | Worker 名称 |
+| `--description` | string | 否 | Worker 描述 |
+| `--memory` | string | 否 | 初始持久化记忆内容 |
+| `--work-dir` | string | 否 | 工作目录路径 |
+
+### worker update
+
+更新 Worker 属性（Patch 语义：未传入的字段保持不变）。
+
+```bash
+openbee ctl worker update <id> [flags]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `id` | — | 是 | Worker UUID |
+| `--name` | string | 否 | 新名称 |
+| `--description` | string | 否 | 新描述 |
+| `--memory` | string | 否 | 新记忆内容 |
+
+### worker delete
+
+删除一个 Worker。
+
+```bash
+openbee ctl worker delete <id> [--delete-work-dir]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `id` | — | 是 | Worker UUID |
+| `--delete-work-dir` | bool | 否 | 同时从磁盘删除工作目录 |
+
+---
+
+## task
+
+管理任务。
+
+### task list
+
+列出任务。`--session-key`、`--message-id`、`--worker-id` 至少需要提供一个。
+
+```bash
+openbee ctl task list [flags]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--session-key` | string | 条件必填 | 按 session key 过滤（与 `--message-id` 互斥） |
+| `--message-id` | string | 条件必填 | 按消息 ID 过滤（与 `--session-key` 互斥） |
+| `--worker-id` | string | 条件必填 | 按 Worker ID 过滤 |
+| `--status` | string | 否 | 按状态过滤，支持逗号分隔（如 `pending,running`） |
+| `--type` | string | 否 | 按类型过滤，支持逗号分隔（如 `immediate,countdown`） |
+
+### task create
+
+创建任务并分配给指定 Worker。
+
+```bash
+openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--message-id` | string | 是 | 来源平台消息的 ID |
+| `--worker-id` | string | 是 | 目标 Worker UUID |
+| `--instruction` | string | 是 | 给 Worker 的指令 |
+| `--type` | string | 是 | 任务类型：`immediate`、`countdown` 或 `scheduled` |
+| `--scheduled-at` | int64 | 条件必填 | Unix 毫秒时间戳；`countdown` 类型必填（需 ≥ 当前时间 + 5s） |
+| `--cron` | string | 条件必填 | 5 字段 cron 表达式；`scheduled` 类型必填 |
+
+### task cancel
+
+取消一个待执行或已调度的任务。
+
+```bash
+openbee ctl task cancel <id>
+```
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `id` | 是 | Task UUID |
+
+---
+
+## memory
+
+管理持久化记忆条目。
+
+### memory get
+
+读取记忆条目。省略 `--key` 则返回指定 scope 下的所有条目。
+
+```bash
+openbee ctl memory get --scope <scope> [--key <key>]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--scope` | string | 是 | `global` 或某个 session key |
+| `--key` | string | 否 | 记忆键；省略则返回该 scope 下所有条目 |
+
+### memory save
+
+保存或更新一条记忆。
+
+```bash
+openbee ctl memory save --scope <scope> --key <key> --value <value>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--scope` | string | 是 | `global` 或某个 session key |
+| `--key` | string | 是 | 记忆键 |
+| `--value` | string | 是 | 记忆值 |
+
+### memory delete
+
+删除一条记忆。
+
+```bash
+openbee ctl memory delete --scope <scope> --key <key>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--scope` | string | 是 | `global` 或某个 session key |
+| `--key` | string | 是 | 记忆键 |
+
+---
+
+## session
+
+管理会话上下文。
+
+### session list
+
+列出某 session key 下所有拥有活跃上下文的 Worker。
+
+```bash
+openbee ctl session list --session-key <key>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--session-key` | string | 是 | 要查询的 session key |
+
+### session clear
+
+取消该 session 的所有活跃任务并清除所有会话上下文。
+
+```bash
+openbee ctl session clear --session-key <key> [--force]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--session-key` | string | 是 | 要清除的 session key |
+| `--force` | bool | 否 | 当有多个 Worker 关联时跳过确认 |
+
+### session clear-worker
+
+重置某 session 中指定 Worker 的上下文。
+
+```bash
+openbee ctl session clear-worker --session-key <key> --worker-id <id>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--session-key` | string | 是 | Session key |
+| `--worker-id` | string | 是 | 要重置上下文的 Worker UUID |
+
+---
+
+## system
+
+查看系统状态和执行历史。
+
+### system overview
+
+显示系统概览：Worker 状态分布、任务统计及近期执行记录。
+
+```bash
+openbee ctl system overview
+```
+
+### system executions
+
+列出 Bee 协调器的执行历史。
+
+```bash
+openbee ctl system executions [--limit <n>]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--limit` | int | 否 | 返回记录数量（默认：10） |
+
+---
+
+## message
+
+向平台用户发送消息。
+
+### message send
+
+向来源平台的用户发送消息。支持纯文本、媒体文件或二者同时发送。如需发送多个文件，请多次调用 `message send`，每次一个文件。
+
+```bash
+openbee ctl message send --message-id <id> [--content <text>] [--media-path <path>]
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `--message-id` | string | 是 | 来源平台消息的 ID |
+| `--content` | string | 条件必填 | 要发送的文本内容；`\n` 会被转换为换行符 |
+| `--media-path` | string | 条件必填 | 要上传并发送的本地文件路径 |
+
+`--content` 和 `--media-path` 至少需要提供一个。
+
+**示例**
+
+```bash
+# 发送纯文本
+openbee ctl message send --message-id <id> --content "任务已完成。"
+
+# 发送文件
+openbee ctl message send --message-id <id> --media-path /tmp/report.pdf
+
+# 同时发送文本和文件
+openbee ctl message send --message-id <id> --content "报告见附件。" --media-path /tmp/report.pdf
+```

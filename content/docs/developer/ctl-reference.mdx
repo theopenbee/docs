@@ -1,0 +1,295 @@
+---
+title: CLI Reference
+description: Complete reference for the openbee ctl command-line tool
+---
+
+The `openbee ctl` command is the command-line interface for controlling a running openbee server. All subcommands communicate with the local server over its configured API.
+
+**Global Flag**
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--config`, `-c` | string | `config.yaml` | Path to config file |
+
+---
+
+## worker
+
+Manage worker agents.
+
+### worker list
+
+List all registered workers.
+
+```bash
+openbee ctl worker list
+```
+
+### worker get
+
+Get a worker by ID.
+
+```bash
+openbee ctl worker get <id>
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `id` | Yes | Worker UUID |
+
+### worker status
+
+Get current status of a worker.
+
+```bash
+openbee ctl worker status <id>
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `id` | Yes | Worker UUID |
+
+### worker create
+
+Create a new worker.
+
+```bash
+openbee ctl worker create --name <name> [flags]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--name`, `-n` | string | Yes | Worker name |
+| `--description` | string | No | Worker description |
+| `--memory` | string | No | Initial persistent memory content |
+| `--work-dir` | string | No | Working directory path |
+
+### worker update
+
+Update a worker's properties (patch semantics: omitted fields are unchanged).
+
+```bash
+openbee ctl worker update <id> [flags]
+```
+
+| Argument / Flag | Type | Required | Description |
+|-----------------|------|----------|-------------|
+| `id` | — | Yes | Worker UUID |
+| `--name` | string | No | New name |
+| `--description` | string | No | New description |
+| `--memory` | string | No | New memory content |
+
+### worker delete
+
+Delete a worker.
+
+```bash
+openbee ctl worker delete <id> [--delete-work-dir]
+```
+
+| Argument / Flag | Type | Required | Description |
+|-----------------|------|----------|-------------|
+| `id` | — | Yes | Worker UUID |
+| `--delete-work-dir` | bool | No | Also delete the working directory from disk |
+
+---
+
+## task
+
+Manage tasks.
+
+### task list
+
+List tasks. At least one of `--session-key`, `--message-id`, or `--worker-id` is required.
+
+```bash
+openbee ctl task list [flags]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--session-key` | string | Conditional | Filter by session key (mutually exclusive with `--message-id`) |
+| `--message-id` | string | Conditional | Filter by message ID (mutually exclusive with `--session-key`) |
+| `--worker-id` | string | Conditional | Filter by worker ID |
+| `--status` | string | No | Filter by status, comma-separated (e.g. `pending,running`) |
+| `--type` | string | No | Filter by type, comma-separated (e.g. `immediate,countdown`) |
+
+### task create
+
+Create a task and assign it to a worker.
+
+```bash
+openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--message-id` | string | Yes | ID of the originating platform message |
+| `--worker-id` | string | Yes | Worker UUID to assign |
+| `--instruction` | string | Yes | Instruction for the worker |
+| `--type` | string | Yes | Task type: `immediate`, `countdown`, or `scheduled` |
+| `--scheduled-at` | int64 | Conditional | Unix milliseconds; required for `countdown` (must be ≥ now + 5s) |
+| `--cron` | string | Conditional | 5-field cron expression; required for `scheduled` |
+
+### task cancel
+
+Cancel a pending or scheduled task.
+
+```bash
+openbee ctl task cancel <id>
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `id` | Yes | Task UUID |
+
+---
+
+## memory
+
+Manage persistent memory entries.
+
+### memory get
+
+Read memory entries. Omit `--key` to list all entries in a scope.
+
+```bash
+openbee ctl memory get --scope <scope> [--key <key>]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--scope` | string | Yes | `global` or a session key |
+| `--key` | string | No | Memory key; omit to return all entries in scope |
+
+### memory save
+
+Save or update a memory entry.
+
+```bash
+openbee ctl memory save --scope <scope> --key <key> --value <value>
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--scope` | string | Yes | `global` or a session key |
+| `--key` | string | Yes | Memory key |
+| `--value` | string | Yes | Memory value |
+
+### memory delete
+
+Delete a memory entry.
+
+```bash
+openbee ctl memory delete --scope <scope> --key <key>
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--scope` | string | Yes | `global` or a session key |
+| `--key` | string | Yes | Memory key |
+
+---
+
+## session
+
+Manage session contexts.
+
+### session list
+
+List all workers with active session contexts for a session key.
+
+```bash
+openbee ctl session list --session-key <key>
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--session-key` | string | Yes | Session key to query |
+
+### session clear
+
+Cancel all active tasks and clear all session contexts for a session key.
+
+```bash
+openbee ctl session clear --session-key <key> [--force]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--session-key` | string | Yes | Session key to clear |
+| `--force` | bool | No | Skip confirmation when multiple workers are linked |
+
+### session clear-worker
+
+Reset one worker's session context within a session.
+
+```bash
+openbee ctl session clear-worker --session-key <key> --worker-id <id>
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--session-key` | string | Yes | Session key |
+| `--worker-id` | string | Yes | Worker UUID whose session context to reset |
+
+---
+
+## system
+
+View system status and execution history.
+
+### system overview
+
+Show system-wide statistics: worker status distribution, task counts, and recent executions.
+
+```bash
+openbee ctl system overview
+```
+
+### system executions
+
+List bee coordinator execution history.
+
+```bash
+openbee ctl system executions [--limit <n>]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--limit` | int | No | Number of records to return (default: 10) |
+
+---
+
+## message
+
+Send messages to platform users.
+
+### message send
+
+Send a message to the user on the originating platform. Supports plain text, media files, or both. To send multiple files, call `message send` once per file.
+
+```bash
+openbee ctl message send --message-id <id> [--content <text>] [--media-path <path>]
+```
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--message-id` | string | Yes | ID of the originating platform message |
+| `--content` | string | Conditional | Text content to send; `\n` is converted to newlines |
+| `--media-path` | string | Conditional | Local file path to upload and send as media |
+
+At least one of `--content` or `--media-path` must be provided.
+
+**Examples**
+
+```bash
+# Send plain text
+openbee ctl message send --message-id <id> --content "Task complete."
+
+# Send a file
+openbee ctl message send --message-id <id> --media-path /tmp/report.pdf
+
+# Send text and file together
+openbee ctl message send --message-id <id> --content "Report attached." --media-path /tmp/report.pdf
+```
