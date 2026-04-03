@@ -1,13 +1,13 @@
 ---
 title: Introduction
-description: OpenBee — Run Claude Code as your digital workers
+description: OpenBee — Run Agent as your digital workers
 ---
 
-OpenBee is a digital worker solution that runs Claude Code as autonomous workers. Each worker is capable of multi-step task planning and independent execution, communicating through your existing IM platforms.
+OpenBee is a digital worker solution that runs Agent as autonomous workers. Each worker is capable of multi-step task planning and independent execution, communicating through your existing IM platforms.
 
 ## Key Features
 
-- **AI Workers** — Claude Code agents with persistent memory and MCP tool invocation
+- **AI Workers** — Agents with persistent memory and MCP tool invocation
 - **Multi-IM Support** — Lark (Feishu), DingTalk, WeCom, and Telegram
 - **Task Scheduling** — Immediate, countdown, and cron-based recurring tasks
 - **Web Console** — Manage workers, monitor tasks, and view execution logs
@@ -28,9 +28,9 @@ graph TD
 
 - **IM Platforms**: Lark, DingTalk, WeCom, WeChat, and Telegram — the entry point for user conversations, with messages routed into the system via the Platform Integration Layer.
 - **Platform Integration Layer**: Handles protocol translation and message routing across all supported IM platforms, forwarding messages to the Central Brain.
-- **Central Brain (Claude Code)**: The system's core intelligence. Simple requests are answered directly back to the IM platforms; complex tasks are broken down into instructions and passed to Task Assignment.
+- **Central Brain (Agent)**: The system's core intelligence. Simple requests are answered directly back to the IM platforms; complex tasks are broken down into instructions and passed to Task Assignment.
 - **Task Assignment**: Dispatches specific tasks to the appropriate digital workers for execution.
-- **Workers (Digital Workers)**: Independent Claude Code agents that receive tasks, perform multi-step planning and autonomous execution, then send results back to the IM platforms.
+- **Workers (Digital Workers)**: Independent Agents that receive tasks, perform multi-step planning and autonomous execution, then send results back to the IM platforms.
 
 ## Next Steps
 
