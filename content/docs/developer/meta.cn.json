@@ -3,10 +3,10 @@
   "pages": [
     "index",
     "architecture",
+    "data-models",
     "api-reference",
     "mcp-reference",
     "ctl-reference",
-    "data-models",
     "contributing"
   ]
 }

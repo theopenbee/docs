@@ -2,19 +2,22 @@
   "title": "User Guide",
   "pages": [
     "index",
-    "installation",
-    "upgrade",
-    "backup",
-    "uninstall",
+    "--- Getting Started",
     "quick-start",
+    "installation",
     "configuration",
     "platforms",
+    "--- Core Features",
     "workers",
     "tasks",
     "sessions",
     "commands",
     "memory",
     "web-console",
-    "use-cases"
+    "use-cases",
+    "--- System Management",
+    "upgrade",
+    "backup",
+    "uninstall"
   ]
 }

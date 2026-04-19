@@ -2,19 +2,22 @@
   "title": "用户指南",
   "pages": [
     "index",
-    "installation",
-    "upgrade",
-    "backup",
-    "uninstall",
+    "--- 入门",
     "quick-start",
+    "installation",
     "configuration",
     "platforms",
+    "--- 核心功能",
     "workers",
     "tasks",
     "sessions",
     "commands",
     "memory",
     "web-console",
-    "use-cases"
+    "use-cases",
+    "--- 系统管理",
+    "upgrade",
+    "backup",
+    "uninstall"
   ]
 }
