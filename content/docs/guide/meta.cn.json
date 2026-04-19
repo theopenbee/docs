@@ -12,6 +12,7 @@
     "workers",
     "tasks",
     "sessions",
+    "commands",
     "memory",
     "web-console",
     "use-cases"
