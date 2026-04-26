@@ -13,8 +13,9 @@ Use slash commands when you want a fast, predictable result — the natural-lang
 |---------|---------|
 | `/engine` | Switch the AI engine used by the Bee or a specific worker |
 | `/clear` | Clear session context for the current chat, optionally for a single worker |
+| `/stop` | Stop the Bee currently running in this chat and cancel any pending messages |
 
-Both commands are recognized across all supported IM platforms (Feishu, DingTalk, WeCom, Telegram, WeChat, and the local chat). They must be the first token of your message — anything like "please run `/clear`" is treated as a regular message and sent to the Bee.
+All commands are recognized across all supported IM platforms (Feishu, DingTalk, WeCom, Telegram, WeChat, and the local chat). They must be the first token of your message — anything like "please run `/clear`" is treated as a regular message and sent to the Bee.
 
 ## `/engine`
 
@@ -204,6 +205,52 @@ If a worker exists but has no active context in this session (for example, it ha
 - **Recover from runaway tasks.** A whole-session `/clear` stops every execution in one step. The 30-second confirmation is there so you don't do it by accident.
 - **Trim bloated context.** When responses are slowing down or agents reference outdated information, clearing is the fastest recovery.
 
+## `/stop`
+
+Immediately stop the Bee that is currently processing in this chat and cancel any messages that are queued but not yet processed. The command is session-scoped — it only affects the chat you send it in.
+
+### Syntax
+
+```text
+/stop     # Stop the running Bee and cancel pending messages in this session
+```
+
+`/stop` takes no arguments.
+
+### Responses
+
+The reply you receive depends on what was actually running when you sent the command:
+
+| Situation | Response |
+|-----------|----------|
+| Bee was running; no queued messages | `✅ Stopped bee execution` |
+| Bee was running; queued messages existed | `✅ Stopped bee execution and cancelled N pending message(s)` |
+| Bee was not running; queued messages existed | `✅ Cancelled N pending message(s)` |
+| Nothing to stop | `Nothing to stop in this session` |
+
+### How It Works
+
+When you send `/stop`:
+
+1. **Bee cancellation** — If a Bee execution is in progress, its Go context is cancelled. Cancellation propagates immediately through the entire execution pipeline; the Bee stops at the next context-aware checkpoint without waiting to finish the current turn.
+2. **Pending message cleanup** — Any messages in `received` status (queued but not yet picked up by the Bee) are marked `failed`. This prevents the Bee from automatically resuming on those messages once the stop clears.
+
+`/stop` does **not** clear conversation context, stop Worker executions, or cancel scheduled tasks. For those, use `/clear`.
+
+### When to Use `/stop`
+
+- **Interrupt a long-running response.** The Bee is taking too long or went off track — send `/stop` to cut it short immediately.
+- **Cancel a queued message.** You sent a message and changed your mind before the Bee processed it — `/stop` removes it from the queue.
+- **Recover from a stuck Bee.** If the Bee appears frozen and not responding, `/stop` forces the execution to terminate.
+- **Stop before a `/clear`.** When you want a clean slate: `/stop` first to drain in-flight work, then `/clear` to wipe context.
+
+### Notes
+
+- **Idempotent** — calling `/stop` when nothing is running is safe; you receive `Nothing to stop in this session` and no state changes.
+- **Session-scoped** — only the chat you send `/stop` in is affected; other sessions continue uninterrupted.
+- **Message records are preserved** — stopped messages are marked `failed` in the database, not deleted.
+- **No confirmation required** — unlike `/clear` with running tasks, `/stop` executes immediately without a second prompt.
+
 ## Slash Commands vs. Natural Conversation
 
 You can also phrase these requests as chat messages (e.g. "clear the session", "switch the engine to codex"). Both paths work; the trade-offs differ:
@@ -235,3 +282,7 @@ The busy-state check will refuse the switch, but a repeated `/engine` during hea
 ### Use Worker-Scoped `/clear` Over Whole-Session `/clear`
 
 Whole-session `/clear` cancels running tasks and wipes the Bee's coordination history. Unless you actually want that, prefer `/clear {workerName}` — it's surgical and preserves the rest of the conversation state.
+
+### Combine `/stop` and `/clear` for a Full Reset
+
+`/stop` drains in-flight work; `/clear` wipes context. When you need a complete reset — no running Bee, no queued messages, no accumulated context — run them in sequence: `/stop` first, then `/clear` once you see the confirmation.
