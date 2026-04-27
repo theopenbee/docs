@@ -1,0 +1,100 @@
+---
+title: /clear
+description: Clear session context for the current chat, optionally for a single worker
+---
+
+Clear accumulated conversation context for the current IM chat. The session is identified by the chat + user combination, so `/clear` only affects the chat you run it in.
+
+## Syntax
+
+```text
+/clear                      # Clear context for every agent (Bee + workers) in this session
+/clear {workerName}         # Clear context for one specific worker in this session
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `workerName` | No | Worker whose context to clear. When omitted, every agent's context in this session is cleared. |
+
+## Example: Clear One Worker
+
+```text
+/clear DocBot
+```
+
+Response:
+
+```text
+✅ Cleared DocBot (engine: claude).
+```
+
+Only DocBot's conversation context is removed. The Bee's context, every other worker's context, and any in-flight tasks are untouched.
+
+## Example: Clear the Entire Session
+
+When no tasks are running, the clear happens immediately:
+
+```text
+/clear
+```
+
+Response:
+
+```text
+✅ Cleared: Bee (claude), DocBot (claude)
+```
+
+When running tasks would be cancelled, `/clear` asks for confirmation first:
+
+```text
+/clear
+```
+
+Response:
+
+```text
+⚠️ Will clear session contexts: Bee (claude), DocBot (claude)
+This will also stop 2 running task(s).
+Send /clear again within 30s to confirm.
+```
+
+Run `/clear` again within 30 seconds to execute the clear. After 30 seconds the confirmation expires and a fresh `/clear` restarts the flow.
+
+On confirmation:
+
+```text
+✅ Cleared: Bee (claude), DocBot (claude). Cancelled 2 task(s).
+```
+
+## What Gets Cleared
+
+Whole-session clear (`/clear`):
+
+1. Stops every in-flight execution associated with this session.
+2. Cancels every pending and running immediate task for this session.
+3. Deletes the conversation context for the Bee and every worker that had an active context in this session.
+
+Worker-specific clear (`/clear {workerName}`):
+
+1. Deletes the conversation context for that worker on its active engine only.
+2. Does **not** stop executions or cancel tasks.
+
+Neither variant touches worker memory, worker configuration, or contexts belonging to other chats.
+
+## Error and Edge Responses
+
+| Situation | Message |
+|-----------|---------|
+| No agent has context in this chat | `No session contexts to clear.` |
+| Worker name not found | `Worker "{name}" not found` |
+| More than one worker shares that name | `Multiple workers named "{name}" found:` followed by each worker's name and UUID |
+| Confirmation timed out (no running tasks cancelled) | The second `/clear` starts a new flow — no error, just a fresh prompt |
+
+If a worker exists but has no active context in this session (for example, it has never been used here), the command also replies `No session contexts to clear.`.
+
+## When to Use `/clear`
+
+- **Start a new topic.** Clearing proactively before a topic change prevents old context from leaking into new responses.
+- **Reset a single misbehaving worker.** Prefer `/clear {workerName}` — it leaves the Bee and other workers alone.
+- **Recover from runaway tasks.** A whole-session `/clear` stops every execution in one step. The 30-second confirmation is there so you don't do it by accident.
+- **Trim bloated context.** When responses are slowing down or agents reference outdated information, clearing is the fastest recovery.

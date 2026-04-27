@@ -1,0 +1,92 @@
+---
+title: /engine
+description: Switch the AI engine used by the Bee or a specific worker
+---
+
+Switch the active AI engine. OpenBee ships with four engines: `claude`, `codex`, `pi`, and `kimi`. Only engines enabled in `config.yaml` can be selected; see [Configuration](/docs/guide/configuration).
+
+## Syntax
+
+```text
+/engine                           # Show usage help
+/engine {engine}                  # Switch the default engine (applies to the Bee and to workers that have no engine pinned)
+/engine {engine} {workerName}     # Switch the engine for a specific worker only
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `engine` | Yes (except bare `/engine`) | Engine name. One of the engines enabled in your server config. |
+| `workerName` | No | Worker to pin to this engine. When omitted, the change updates the system-wide default. |
+
+## Examples
+
+Switch the default engine for the whole deployment:
+
+```text
+/engine claude
+```
+
+Response:
+
+```text
+Default engine switched to claude
+```
+
+Pin a specific worker to a different engine:
+
+```text
+/engine codex DocBot
+```
+
+Response:
+
+```text
+Worker "DocBot" engine switched to codex
+```
+
+Show the usage hint:
+
+```text
+/engine
+```
+
+Response:
+
+```text
+Usage:
+/engine {engine} — switch the default engine
+/engine {engine} {workerName} — switch the engine for a specific worker
+```
+
+## How It Works
+
+- **Default switch** (`/engine {engine}`): updates the `default_engine` entry in system config and refreshes the in-memory cache. The Bee and every worker that does **not** have its own engine pinned will use the new engine on the next run.
+- **Worker switch** (`/engine {engine} {workerName}`): updates the `engine` field on that worker record only. The default engine is not changed, and other workers are unaffected.
+
+A worker with no engine pinned always follows the current default engine; setting a worker-level engine overrides the default for that worker only.
+
+## Busy-State Protection
+
+Switching engines while work is in flight would leave executions and session contexts in an inconsistent state. `/engine` therefore refuses to switch when any of the following is true, and reports which condition blocked it:
+
+| Blocker | Message |
+|---------|---------|
+| A platform message is still being received or processed | `Cannot switch engine: there are messages being received or processed. Please wait until they are completed.` |
+| At least one execution is in progress | `Cannot switch engine: there are executions in progress. Please wait until they are completed.` |
+| At least one immediate task is pending or running | `Cannot switch engine: there are immediate tasks pending or running. Please wait until they are completed.` |
+
+Checks run in parallel; messages take priority, followed by executions, then tasks. Wait for the cited activity to finish and retry.
+
+## Error Responses
+
+| Situation | Message |
+|-----------|---------|
+| Engine name is not enabled on this server | `Unknown engine: {name}, supported engines: claude / codex / pi / kimi` |
+| Worker name does not exist | `Worker "{name}" not found` |
+| Database write failed | `Switch failed, please try again later` |
+
+## When to Use `/engine`
+
+- Globally move to a different provider after rotating API keys or changing cost budgets.
+- Put a workload-heavy worker on a cheaper or faster engine while keeping the rest on the default.
+- Try a new engine on one worker before rolling it out to the whole deployment.

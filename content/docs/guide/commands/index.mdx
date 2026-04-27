@@ -1,0 +1,54 @@
+---
+title: Chat Commands
+description: Slash commands for fast, deterministic actions in IM chats
+---
+
+In addition to natural-language instructions (e.g. "clear the session"), OpenBee accepts a small set of slash commands that you can type directly into any IM chat where the Bee is present. Slash commands are parsed without invoking the AI engine, so they execute immediately, cost no tokens, and behave identically every time.
+
+Use slash commands when you want a fast, predictable result — the natural-language alternatives still work, but they route through the Bee and are subject to its interpretation.
+
+## Overview
+
+| Command | Purpose |
+|---------|---------|
+| [/engine](./engine) | Switch the AI engine used by the Bee or a specific worker |
+| [/clear](./clear) | Clear session context for the current chat, optionally for a single worker |
+| [/stop](./stop) | Stop the Bee currently running in this chat and cancel any pending messages |
+
+All commands are recognized across all supported IM platforms (Feishu, DingTalk, WeCom, Telegram, WeChat, and the local chat). They must be the first token of your message — anything like "please run `/clear`" is treated as a regular message and sent to the Bee.
+
+## Slash Commands vs. Natural Conversation
+
+You can also phrase these requests as chat messages (e.g. "clear the session", "switch the engine to codex"). Both paths work; the trade-offs differ:
+
+| | Slash command | Natural conversation |
+|---|---|---|
+| **Speed** | Instant — no AI invocation | Slower — routed through the Bee |
+| **Cost** | Free — no tokens consumed | Uses the Bee's tokens |
+| **Determinism** | Same input → same action | Depends on the Bee's interpretation |
+| **Expressiveness** | Fixed syntax | Accepts approximations, synonyms, multi-step intent |
+| **Undo** | No undo; confirmation only for destructive `/clear` | The Bee may ask for confirmation if the phrasing is ambiguous |
+
+Reach for slash commands when you know exactly what you want and want it to happen immediately. Use natural conversation when the intent is more open-ended (e.g. "reset the worker that was complaining earlier").
+
+## Best Practices
+
+### Keep `/clear` as a Routine Hygiene Command
+
+Treat `/clear` like flushing a cache — use it when switching contexts, before starting a significant new task, or when agent behaviour drifts. The worker-scoped form is cheap and non-destructive; don't wait until the whole session is broken to use it.
+
+### Verify Engine Availability Before `/engine`
+
+Only engines enabled in the server's configuration can be selected. If `/engine {name}` reports `Unknown engine`, the engine binary is not installed or not configured — fix that in `config.yaml` rather than retrying the command.
+
+### Don't Run `/engine` During Active Workloads
+
+The busy-state check will refuse the switch, but a repeated `/engine` during heavy traffic produces noise. Schedule engine changes during quiet periods, or pause incoming messages first.
+
+### Use Worker-Scoped `/clear` Over Whole-Session `/clear`
+
+Whole-session `/clear` cancels running tasks and wipes the Bee's coordination history. Unless you actually want that, prefer `/clear {workerName}` — it's surgical and preserves the rest of the conversation state.
+
+### Combine `/stop` and `/clear` for a Full Reset
+
+`/stop` drains in-flight work; `/clear` wipes context. When you need a complete reset — no running Bee, no queued messages, no accumulated context — run them in sequence: `/stop` first, then `/clear` once you see the confirmation.

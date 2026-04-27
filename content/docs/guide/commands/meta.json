@@ -1,0 +1,4 @@
+{
+  "title": "Chat Commands",
+  "pages": ["index", "engine", "clear", "stop"]
+}
