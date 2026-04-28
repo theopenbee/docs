@@ -3,7 +3,7 @@ title: Workers
 description: Create and manage AI workers through conversation
 ---
 
-Workers are AI agents that execute tasks on your behalf. Each worker has its own name, description, memory, and working directory. You can manage workers through the web console or by chatting directly with the Bee (coordinator) in your IM platform.
+Workers are AI agents that execute tasks on your behalf. Each worker has its own name, description, constraints, and working directory. You can manage workers through the web console or by chatting directly with the Bee (coordinator) in your IM platform.
 
 ## Managing Workers Through Conversation
 
@@ -15,13 +15,13 @@ You can create, update, and delete workers by simply telling the Bee what you ne
 
 > "I need a new worker for writing documentation, call it DocWriter"
 
-The Bee will create the worker and confirm with you. You can specify a name, description, and initial memory in your message.
+The Bee will create the worker and confirm with you. You can specify a name, description, and initial constraints in your message.
 
 ### Update a Worker
 
 > "Update Xiaoming's description to focus on Go code reviews"
 
-> "Change DocWriter's memory to always write in Chinese"
+> "Change DocWriter's constraints to always write in Chinese"
 
 ### Delete a Worker
 
@@ -49,7 +49,7 @@ Each worker has the following properties:
 |----------|-------------|
 | **Name** | Display name for addressing the worker in conversation |
 | **Description** | What the worker does — the Bee uses this for task routing |
-| **Memory** | Persistent context that shapes the worker's behavior |
+| **Constraints** | Persistent rules that shape the worker's behavior |
 | **Work Directory** | Filesystem path where the worker operates. Defaults to `~/.openbee/worker/{id}`, or set to a custom absolute path. |
 
 ## How the Bee Routes Tasks to Workers
@@ -79,9 +79,9 @@ The description is the most important field for task routing. The Bee uses it to
 
 When multiple workers have overlapping descriptions, the Bee will ask you to choose. Keep descriptions distinct so routing is automatic.
 
-### Use Memory to Shape Behavior
+### Use Constraints to Shape Behavior
 
-Memory is written to the worker's system prompt and persists across all tasks. Use it to define the worker's personality, expertise, and constraints.
+Constraints are written to the worker's system prompt and persist across all tasks. Use them to define the worker's expertise, communication style, and rules.
 
 **Domain expertise:**
 > "You are an experienced Python developer. Always follow PEP 8 and prefer type hints."
@@ -89,15 +89,15 @@ Memory is written to the worker's system prompt and persists across all tasks. U
 **Communication style:**
 > "Respond concisely in bullet points. Avoid long paragraphs."
 
-**Constraints and safety:**
+**Safety rules:**
 > "Never make breaking API changes without confirming with the user first."
 
 **Context and audience:**
 > "You are helping a non-technical user. Explain everything in simple terms."
 
-You can update memory at any time through conversation:
+You can update constraints at any time through conversation:
 
-> "Update Xiaoming's memory to include: always run tests before committing"
+> "Update Xiaoming's constraints to include: always run tests before committing"
 
 ### Set Custom Work Directories for Project Work
 
@@ -122,7 +122,7 @@ When you mention a worker by name, the Bee routes directly to that worker withou
 Rather than one general-purpose worker, create specialized workers for different domains. This improves:
 
 - **Routing accuracy** — specific descriptions match requests better
-- **Response quality** — focused memory produces more relevant output
+- **Response quality** — focused constraints produce more relevant output
 - **Task isolation** — each worker maintains its own context and working state
 
 **Example team setup:**
@@ -132,7 +132,7 @@ Rather than one general-purpose worker, create specialized workers for different
 
 ## CLAUDE.md Customization
 
-Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's memory field, but you can also edit it directly for advanced customization.
+Each worker has a `CLAUDE.md` file in its working directory that defines the worker's system prompt. This file is automatically managed by OpenBee based on the worker's constraints field, but you can also edit it directly for advanced customization.
 
 ## Worker Status
 
