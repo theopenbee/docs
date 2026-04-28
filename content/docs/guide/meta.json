@@ -12,7 +12,7 @@
     "tasks",
     "sessions",
     "commands",
-    "memory",
+    "constraints",
     "use-cases",
     "--- System Management",
     "upgrade",

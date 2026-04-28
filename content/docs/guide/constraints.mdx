@@ -1,0 +1,164 @@
+---
+title: Constraints
+description: Define rules and guidelines that govern Bee and worker behavior across conversations
+---
+
+Constraints are persistent rules that shape how OpenBee behaves. There are two types: **global constraints** that the Bee reads and writes to accumulate experience across sessions, and **worker constraints** that define fixed behavioral guidelines for individual workers.
+
+## Global Constraints
+
+Global constraints are a persistent key-value store the Bee uses to remember preferences, workflow insights, and learned patterns. They are organized by scope: `global` for system-wide knowledge, or a session key for user-specific preferences.
+
+### How It Works
+
+Each time you interact with the Bee, it loads relevant constraints before responding. When it learns something worth persisting — a preference, a pattern, a workflow insight — it saves it automatically.
+
+You can also manage constraints directly through conversation:
+
+### Save a Constraint
+
+> "Remember that I prefer concise replies"
+
+> "Save a note: our API uses snake_case naming"
+
+### View Constraints
+
+> "What rules do you have on record about me?"
+
+> "Show all saved constraints"
+
+### Delete a Constraint
+
+> "Forget my language preference"
+
+> "Delete the constraint about API naming"
+
+### Constraint Structure
+
+Each global constraint entry has:
+
+| Field | Description |
+|-------|-------------|
+| **Key** | A descriptive identifier (e.g., `user_language_preference`) |
+| **Value** | The constraint content |
+| **Scope** | `global` for system-wide, or a session key for user-specific |
+
+The Bee uses descriptive keys that act as self-documentation, making constraints easy to understand and manage.
+
+### Global vs. Session-Scoped
+
+- **Global** constraints apply across all users and sessions — useful for universal insights and patterns
+- **Session-scoped** constraints are tied to one user or conversation — useful for personal preferences
+
+The Bee chooses the appropriate scope automatically based on context.
+
+### Managing via CLI
+
+You can also manage global constraints directly with the CLI:
+
+```bash
+# List all global constraints
+openbee ctl constraint get --scope global
+
+# Get a specific constraint
+openbee ctl constraint get --scope global --key user_language_preference
+
+# Save or update a constraint
+openbee ctl constraint save --scope global --key task_routing_insight \
+  --value "prefer CodeBot for Python tasks"
+
+# Delete a constraint
+openbee ctl constraint delete --scope global --key outdated_preference
+```
+
+## Worker Constraints
+
+Worker constraints are a text field on each worker that gets injected into their system prompt at the start of every task. They define the worker's persistent behavioral guidelines — expertise, rules, communication style, and limitations.
+
+### How It Works
+
+When a task is assigned to a worker, their constraints are formatted directly into the system prompt:
+
+```
+You are a Worker in an AI team.
+Name: CodeBot
+Description: Handles code review tasks
+
+## Work Constraints
+Always follow PEP 8. Prefer type hints. Write tests for every function.
+```
+
+Worker constraints persist across all tasks and don't change between conversations unless you explicitly update them.
+
+### Set Worker Constraints
+
+Set constraints when creating or updating a worker:
+
+> "Create a worker named CodeBot with constraints: always follow PEP 8, prefer type hints, write tests for every function"
+
+> "Update CodeBot's constraints to include: use pytest instead of unittest"
+
+### View Worker Constraints
+
+> "What are CodeBot's constraints?"
+
+> "Show me CodeBot's details"
+
+### Update Worker Constraints
+
+> "Change CodeBot's constraints to: focus on Go development, follow Effective Go guidelines"
+
+> "Add to CodeBot's constraints: always run linting before committing"
+
+### What to Put in Worker Constraints
+
+Worker constraints are well-suited for:
+
+**Domain expertise:**
+> "You are an experienced Python developer. Always follow PEP 8 and prefer type hints."
+
+**Communication style:**
+> "Respond concisely in bullet points. Avoid long paragraphs."
+
+**Safety rules:**
+> "Never make breaking API changes without confirming with the user first."
+
+**Audience context:**
+> "You are helping a non-technical user. Explain everything in simple terms."
+
+## Global vs. Worker Constraints
+
+| | Global Constraints | Worker Constraints |
+|---|---|---|
+| **Storage** | Key-value pairs in database | Text field on worker record |
+| **Scope** | System-wide or per-session | Per-worker |
+| **Lifetime** | Permanent until deleted | Tied to the worker |
+| **Who reads it** | Bee (for decision-making) | The specific worker |
+| **Who writes it** | Bee (automatically or on request) | You (when creating/updating workers) |
+| **Use case** | Preferences, insights, patterns | Behavioral rules, expertise, limitations |
+
+## Best Practices
+
+### Let the Bee Learn Naturally
+
+The Bee proactively saves constraints when it notices preferences or patterns. Interact naturally and it will capture recurring themes on its own.
+
+### Use Explicit Constraints for Critical Preferences
+
+For preferences you don't want missed, tell the Bee directly:
+
+> "Remember: always assign code review tasks to CodeBot"
+
+> "Remember: I prefer detailed explanations over brief answers"
+
+### Keep Worker Constraints Focused
+
+Worker constraints should be concise and directly relevant to the worker's role. Avoid overloading them — focus on rules that meaningfully affect output quality.
+
+### Review and Clean Up Periodically
+
+Constraints can become outdated. Review and remove stale entries occasionally:
+
+> "Show all constraints"
+
+> "Delete the constraint about the old API endpoint"
