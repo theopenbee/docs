@@ -67,15 +67,23 @@ A worker with no engine pinned always follows the current default engine; settin
 
 ## Busy-State Protection
 
-Switching engines while work is in flight would leave executions and session contexts in an inconsistent state. `/engine` therefore refuses to switch when any of the following is true, and reports which condition blocked it:
+Switching engines while work is in flight would leave executions and session contexts in an inconsistent state. The checks are **scoped to the switch type** — a busy bee does not prevent you from switching an idle worker's engine.
+
+**Default engine switch** is blocked when:
 
 | Blocker | Message |
 |---------|---------|
 | A platform message is still being received or processed | `Cannot switch engine: there are messages being received or processed. Please wait until they are completed.` |
 | At least one execution is in progress | `Cannot switch engine: there are executions in progress. Please wait until they are completed.` |
-| At least one immediate task is pending or running | `Cannot switch engine: there are immediate tasks pending or running. Please wait until they are completed.` |
 
-Checks run in parallel; messages take priority, followed by executions, then tasks. Wait for the cited activity to finish and retry.
+**Worker engine switch** is blocked when:
+
+| Blocker | Message |
+|---------|---------|
+| That worker has an active execution | `Cannot switch engine: there are executions in progress. Please wait until they are completed.` |
+| That worker has an immediate task pending or running | `Cannot switch engine: there are immediate tasks pending or running. Please wait until they are completed.` |
+
+A worker switch is not blocked by messages or executions belonging to other workers or the bee itself — only by activity on that specific worker. Wait for the cited activity to finish and retry.
 
 ## Error Responses
 
