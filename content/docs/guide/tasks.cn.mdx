@@ -52,6 +52,56 @@ Bee 按以下优先级将任务路由到数字员工：
 3. **描述匹配** — Bee 会将你的请求与数字员工的描述进行语义匹配
 4. **兜底处理** — 如果没有匹配的数字员工，Bee 会建议你创建一个
 
+## 任务直接指派
+
+你可以绕过 Bee 的路由逻辑，通过 CLI 将任务直接指派给指定的数字员工。适用于自动化脚本，以及数字员工之间的任务分发（例如某个数字员工在执行过程中需要将后续工作指派给另一个数字员工）。
+
+```bash
+openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
+```
+
+首先，获取目标数字员工的 ID：
+
+```bash
+openbee ctl worker list
+```
+
+然后创建任务。支持三种任务类型：
+
+**即时任务** — 数字员工可用时立即执行：
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "分析最新的部署日志并汇报所有错误" \
+  --type immediate
+```
+
+**倒计时任务** — 在指定时间执行（`--scheduled-at` 必须至少比当前时间晚 5 秒，单位为 Unix 毫秒）：
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "发送每日结束汇总报告" \
+  --type countdown \
+  --scheduled-at 1735660800000
+```
+
+**定时任务** — 按 cron 计划周期性执行（5 字段格式：`分钟 小时 日 月 星期`）：
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "检查系统健康状态，如有服务异常则发出告警" \
+  --type scheduled \
+  --cron "0 * * * *"
+```
+
+如果 cron 表达式无效，任务会以 `cancelled` 状态创建，并在 reason 字段中说明解析错误原因。完整参数说明请参考 [CLI 参考](/docs/developer/ctl-reference#task-create)。
+
 ## 查询任务
 
 通过对话向 Bee 询问任务状态：

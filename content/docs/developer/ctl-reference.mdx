@@ -116,7 +116,7 @@ openbee ctl task list [flags]
 
 ### task create
 
-Create a task and assign it to a worker.
+Create a task and assign it directly to a worker, bypassing the Bee's automatic routing.
 
 ```bash
 openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
@@ -130,6 +130,35 @@ openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> 
 | `--type` | string | Yes | Task type: `immediate`, `countdown`, or `scheduled` |
 | `--scheduled-at` | int64 | Conditional | Unix milliseconds; required for `countdown` (must be ≥ now + 5s) |
 | `--cron` | string | Conditional | 5-field cron expression; required for `scheduled` |
+
+**Examples**
+
+```bash
+# Immediate task — executes as soon as the worker is available
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Analyze the latest deployment logs and report any errors" \
+  --type immediate
+
+# Countdown task — executes at a specific time (Unix milliseconds, must be ≥ now + 5s)
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Send the end-of-day summary report" \
+  --type countdown \
+  --scheduled-at 1735660800000
+
+# Scheduled task — executes on a recurring cron schedule
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Check system health and alert if any service is down" \
+  --type scheduled \
+  --cron "0 * * * *"
+```
+
+If `--cron` is invalid, the task is created with status `cancelled` and a `reason` field explaining the parse error.
 
 ### task cancel
 

@@ -52,6 +52,56 @@ The Bee routes tasks to workers based on these rules (in priority order):
 3. **Description matching** — The Bee matches your request against worker descriptions
 4. **Fallback** — If no worker matches, the Bee will suggest creating one
 
+## Direct Task Assignment
+
+You can bypass the Bee's routing and assign a task directly to a specific worker using the CLI. This is useful for automation scripts and worker-to-worker delegation (e.g., a worker dispatching follow-up work to another worker from within its own task).
+
+```bash
+openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
+```
+
+First, find the target worker's ID:
+
+```bash
+openbee ctl worker list
+```
+
+Then create the task. All three task types are supported:
+
+**Immediate** — executes as soon as the worker is available:
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Analyze the latest deployment logs and report any errors" \
+  --type immediate
+```
+
+**Countdown** — executes at a specific time (`--scheduled-at` must be at least 5 seconds in the future, in Unix milliseconds):
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Send the end-of-day summary report" \
+  --type countdown \
+  --scheduled-at 1735660800000
+```
+
+**Scheduled** — executes on a recurring cron schedule (5-field format: `minute hour day month weekday`):
+
+```bash
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "Check system health and alert if any service is down" \
+  --type scheduled \
+  --cron "0 * * * *"
+```
+
+If the cron expression is invalid, the task is created with status `cancelled` and a reason explaining the parse error. See the [CLI Reference](/docs/developer/ctl-reference#task-create) for the full flag reference.
+
 ## Querying Tasks
 
 Ask the Bee about task status through conversation:

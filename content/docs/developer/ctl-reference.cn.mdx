@@ -116,7 +116,7 @@ openbee ctl task list [flags]
 
 ### task create
 
-创建任务并分配给指定 Worker。
+创建任务并直接指派给指定 Worker，绕过 Bee 的自动路由。
 
 ```bash
 openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> --type <type> [flags]
@@ -130,6 +130,35 @@ openbee ctl task create --message-id <id> --worker-id <id> --instruction <text> 
 | `--type` | string | 是 | 任务类型：`immediate`、`countdown` 或 `scheduled` |
 | `--scheduled-at` | int64 | 条件必填 | Unix 毫秒时间戳；`countdown` 类型必填（需 ≥ 当前时间 + 5s） |
 | `--cron` | string | 条件必填 | 5 字段 cron 表达式；`scheduled` 类型必填 |
+
+**示例**
+
+```bash
+# 即时任务 — 数字员工可用时立即执行
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "分析最新的部署日志并汇报所有错误" \
+  --type immediate
+
+# 倒计时任务 — 在指定时间执行（Unix 毫秒，需 ≥ 当前时间 + 5s）
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "发送每日结束汇总报告" \
+  --type countdown \
+  --scheduled-at 1735660800000
+
+# 定时任务 — 按 cron 计划周期性执行
+openbee ctl task create \
+  --message-id "msg-abc123" \
+  --worker-id "worker-uuid" \
+  --instruction "检查系统健康状态，如有服务异常则发出告警" \
+  --type scheduled \
+  --cron "0 * * * *"
+```
+
+如果 `--cron` 表达式无效，任务会以 `cancelled` 状态创建，并在 `reason` 字段中说明解析错误原因。
 
 ### task cancel
 
