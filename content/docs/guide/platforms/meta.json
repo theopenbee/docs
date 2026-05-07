@@ -1,4 +1,4 @@
 {
   "title": "Platforms",
-  "pages": ["index", "feishu", "dingtalk", "wecom", "telegram", "weixin"]
+  "pages": ["index", "feishu", "dingtalk", "wecom", "telegram", "weixin", "linear"]
 }

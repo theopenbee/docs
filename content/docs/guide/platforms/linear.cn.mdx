@@ -1,0 +1,65 @@
+---
+title: Linear
+description: 设置 Linear 问题跟踪集成
+---
+
+## 创建 Linear API 密钥
+
+1. 在你的 Linear 工作区前往 **Settings → API**
+2. 在 **Personal API keys** 下，点击 **Create key**
+3. 输入名称（如 "OpenBee"）并复制生成的 API 密钥
+
+## 配置标签
+
+OpenBee 监控带有特定标签的 Issue。默认情况下，它查找名为 **openbee** 的标签。
+
+1. 在你的 Linear 工作区前往 **Settings → Labels**
+2. 创建一个名为 `openbee` 的新标签（或使用任意名称 — 需在配置中指定）
+
+## 配置工作流状态
+
+OpenBee 只处理处于你所指定工作流状态中的 Issue。确认哪些状态名称应触发机器人（如 `Todo`、`In Progress`）。
+
+## 配置 OpenBee
+
+在 `config.yaml` 中添加：
+
+```yaml
+bee:
+  platforms:
+    linear:
+      enabled: true
+      api_key: "lin_api_xxxxxxxxxxxx"
+      label_name: "openbee"       # 用于过滤 Issue 的标签名，默认 "openbee"
+      poll_interval: 10s          # 轮询间隔，默认 10s
+      projects:                   # 可选：项目名称白名单，不填则不过滤
+        - "Backend"
+        - "Frontend"
+      states:                     # 可选：状态名称白名单，不填则不过滤
+        - "Todo"
+        - "In Progress"
+      max_media_size: 52428800    # 50MB，可选
+```
+
+## 部署
+
+重启 OpenBee。它将按 `poll_interval` 配置定期轮询 Linear，并处理满足以下条件的 Issue：
+
+- 带有配置的 `label_name` 标签
+- 处于配置的 `states` 中的某个状态（如已配置）
+- 属于配置的 `projects` 中的某个项目（如已配置）
+
+## 触发机器人
+
+要让 OpenBee 处理某个 Issue，只需为该 Issue 添加配置的标签（如 **openbee**）。OpenBee 将：
+
+1. 在下次轮询时检测到该 Issue
+2. 以 👀 表情回应表示确认
+3. 将 Issue 标题、描述及现有评论合并后派发给数字员工会话
+4. 以评论形式发布回复
+
+该 Issue 上后续由非机器人用户发布的评论，将作为同一会话中的新消息继续派发。
+
+## 媒体支持
+
+Linear 支持不超过配置的 `max_media_size`（默认 50MB）的媒体文件。OpenBee 会从 Linear 的资产存储中下载图片和附件并转发给数字员工，并将回复中的媒体文件上传回 Linear。

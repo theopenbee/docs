@@ -1,0 +1,65 @@
+---
+title: Linear
+description: Set up Linear issue tracking integration
+---
+
+## Create a Linear API Key
+
+1. Go to **Settings → API** in your Linear workspace
+2. Under **Personal API keys**, click **Create key**
+3. Give it a name (e.g., "OpenBee") and copy the generated API key
+
+## Configure a Label
+
+OpenBee monitors issues that have a specific label. By default it looks for a label named **openbee**.
+
+1. Go to **Settings → Labels** in your Linear workspace
+2. Create a new label named `openbee` (or any name — you will set it in config)
+
+## Configure Workflow States
+
+OpenBee only processes issues in the workflow states you specify. Identify which state names should trigger the bot (e.g., `Todo`, `In Progress`).
+
+## Configure OpenBee
+
+Add to your `config.yaml`:
+
+```yaml
+bee:
+  platforms:
+    linear:
+      enabled: true
+      api_key: "lin_api_xxxxxxxxxxxx"
+      label_name: "openbee"       # Label that gates processing; default "openbee"
+      poll_interval: 10s          # How often to poll Linear; default 10s
+      projects:                   # Optional: project name allowlist; omit to skip filtering
+        - "Backend"
+        - "Frontend"
+      states:                     # Optional: state name allowlist; omit to skip filtering
+        - "Todo"
+        - "In Progress"
+      max_media_size: 52428800    # 50MB, optional
+```
+
+## Deploy
+
+Restart OpenBee. It will begin polling Linear every `poll_interval` and process any issues that:
+
+- Have the configured `label_name` label
+- Are in one of the configured `states` (if set)
+- Belong to one of the configured `projects` (if set)
+
+## Triggering the Bot
+
+To have OpenBee process an issue, assign the configured label (e.g., **openbee**) to the issue. OpenBee will:
+
+1. Detect the issue on the next poll
+2. Acknowledge with a 👀 reaction
+3. Dispatch the issue title, description, and any existing comments to a worker session
+4. Post replies as comments on the issue
+
+Subsequent comments added by non-bot users will be dispatched as additional messages in the same session.
+
+## Media Support
+
+Linear supports media files up to the configured `max_media_size` (default 50MB). OpenBee downloads images and attachments from Linear's asset storage and forwards them to workers, then uploads reply media back to Linear.
