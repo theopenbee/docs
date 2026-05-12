@@ -1,45 +1,101 @@
-# docs
+# openbee-docs
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+Official documentation site for [OpenBee](https://github.com/theopenbee/openbee) — a digital worker solution that runs Agents as autonomous workers communicating through IM platforms.
 
-Run development server:
+**Live site**: https://docs.theopenbee.com
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org/) — React framework
+- [Fumadocs](https://fumadocs.dev/) — Documentation framework (UI + MDX)
+- [Tailwind CSS v4](https://tailwindcss.com/) — Styling
+- [Mermaid](https://mermaid.js.org/) — Diagram rendering
+- [Vercel Analytics](https://vercel.com/analytics) — Site analytics
+
+## Content Structure
+
+All documentation lives in `content/docs/` and is bilingual (English + Chinese):
+
+```
+content/docs/
+├── guide/                  # User guides
+│   ├── installation.mdx
+│   ├── quick-start.mdx
+│   ├── tasks.mdx
+│   ├── workers.mdx
+│   ├── sessions.mdx
+│   ├── constraints.mdx
+│   ├── backup.mdx
+│   ├── upgrade.mdx
+│   ├── uninstall.mdx
+│   ├── commands/           # CLI commands
+│   │   ├── engine.mdx
+│   │   ├── clear.mdx
+│   │   ├── list.mdx
+│   │   ├── status.mdx
+│   │   └── stop.mdx
+│   ├── platforms/          # IM platform integrations
+│   │   ├── feishu.mdx      # Lark / Feishu
+│   │   ├── dingtalk.mdx
+│   │   ├── wecom.mdx
+│   │   ├── weixin.mdx
+│   │   ├── telegram.mdx
+│   │   └── linear.mdx
+│   └── use-cases/          # Use case tutorials
+│       ├── claude-code-dev.mdx
+│       └── shell-commands.mdx
+└── developer/              # Developer documentation
+    ├── architecture.mdx
+    ├── api-reference.mdx
+    ├── ctl-reference.mdx
+    ├── data-models.mdx
+    └── contributing.mdx
+```
+
+Each `.mdx` file has a corresponding `.cn.mdx` Chinese translation and `meta.json` / `meta.cn.json` for sidebar configuration.
+
+## Development
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
+pnpm install
+```
+
+Run the development server:
+
+```bash
 pnpm dev
-# or
-yarn dev
 ```
 
 Open http://localhost:3000 with your browser to see the result.
 
-## Explore
+Build for production:
 
-In the project, you can see:
+```bash
+pnpm build
+```
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+Type check:
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+```bash
+pnpm types:check
+```
 
-### Fumadocs MDX
+## Key Files
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
+| File | Description |
+|------|-------------|
+| `source.config.ts` | Fumadocs content source configuration, MDX plugins (Mermaid) |
+| `src/lib/source.ts` | Content source adapter exposing the `loader()` API |
+| `src/lib/layout.shared.tsx` | Shared layout options across the docs site |
+| `src/app/[lang]/` | Localized app routes (English + Chinese) |
+| `src/app/api/search/route.ts` | Full-text search route handler |
 
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
+## Contributing
 
-## Learn More
+When adding or updating documentation:
 
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+1. Add both the English (`.mdx`) and Chinese (`.cn.mdx`) versions
+2. Update the corresponding `meta.json` / `meta.cn.json` to include the page in the sidebar
+3. Run `pnpm dev` to preview changes locally
