@@ -14,6 +14,8 @@ Use slash commands when you want a fast, predictable result — the natural-lang
 | [/engine](./engine) | Switch the AI engine used by the Bee or a specific worker |
 | [/clear](./clear) | Clear session context for the current chat, optionally for a single worker |
 | [/stop](./stop) | Stop the Bee currently running in this chat and cancel any pending messages |
+| [/status](./status) | Show active Bees and running tasks in the current session |
+| [/list](./list) | List all workers, optionally filtered by a keyword |
 
 All commands are recognized across all supported IM platforms (Feishu, DingTalk, WeCom, Telegram, WeChat, and the local chat). They must be the first token of your message — anything like "please run `/clear`" is treated as a regular message and sent to the Bee.
 
@@ -52,3 +54,11 @@ Whole-session `/clear` cancels running tasks and wipes the Bee's coordination hi
 ### Combine `/stop` and `/clear` for a Full Reset
 
 `/stop` drains in-flight work; `/clear` wipes context. When you need a complete reset — no running Bee, no queued messages, no accumulated context — run them in sequence: `/stop` first, then `/clear` once you see the confirmation.
+
+### Use `/status` Before Disruptive Commands
+
+Before running `/stop` or `/clear`, run `/status` to confirm what's actually in flight. It takes no tokens and gives you a clear picture of active Bees and running tasks, so you don't accidentally interrupt work you care about.
+
+### Use `/list` to Find Workers by Description
+
+If you can't remember a worker's exact name, `/list {keyword}` lets you search by description. This is faster than scrolling through the admin UI and works directly in any chat where the Bee is present.

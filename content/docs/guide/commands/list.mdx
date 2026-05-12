@@ -1,0 +1,105 @@
+---
+title: /list
+description: List all workers, optionally filtered by a keyword
+---
+
+Display all workers registered in your OpenBee deployment. An optional keyword narrows the results to workers whose description contains the search term.
+
+## Syntax
+
+```text
+/list                   # List all workers
+/list {keyword}         # List workers whose description matches the keyword
+```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `keyword` | No | Case-insensitive substring to match against worker descriptions. |
+
+## Examples
+
+List all workers:
+
+```text
+/list
+```
+
+Response:
+
+```text
+Workers (3):
+  - CodeBot   status: working   Full-stack engineer on the openbee backend
+  - DocBot   status: idle   Technical writer for the openbee docs team
+  - QABot   status: idle   QA engineer focused on openbee test coverage
+```
+
+Filter by keyword:
+
+```text
+/list openbee
+```
+
+Response:
+
+```text
+Workers matching "openbee" (3):
+  - CodeBot   status: working   Full-stack engineer on the openbee backend
+  - DocBot   status: idle   Technical writer for the openbee docs team
+  - QABot   status: idle   QA engineer focused on openbee test coverage
+```
+
+No matches:
+
+```text
+/list xyz
+```
+
+Response:
+
+```text
+Workers matching "xyz" (0):
+  (no matches)
+```
+
+## Output
+
+Each worker line contains:
+
+| Field | Description |
+|-------|-------------|
+| Name | Worker name |
+| `status` | Current worker status |
+| Description | Worker description text |
+
+### Worker Status Labels
+
+| Status | Label |
+|--------|-------|
+| Idle | `idle` |
+| Working | `working` |
+| Error | `error` |
+
+### Filtering Behaviour
+
+- The keyword is matched against the **description field only**, not the worker name.
+- Matching is **case-insensitive** and **substring-based** — the keyword does not need to be a complete word.
+- Results are sorted **alphabetically by worker name**, both with and without a filter.
+
+### Empty State
+
+| Situation | Output |
+|-----------|--------|
+| No workers exist | `Workers (0):` then `(no workers)` |
+| Filter matches nothing | `Workers matching "xyz" (0):` then `(no matches)` |
+
+## Error Responses
+
+| Situation | Response |
+|-----------|----------|
+| Database lookup failed | `⚠️ Failed to list workers. Please retry; if this persists, check server logs.` |
+
+## When to Use `/list`
+
+- **Discover available workers** before assigning a task to one.
+- **Find a specific worker** by description keyword when you can't recall the exact name.
+- **Audit worker states** — check at a glance which workers are idle versus busy.

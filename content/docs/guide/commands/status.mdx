@@ -1,0 +1,84 @@
+---
+title: /status
+description: Show active Bees and running tasks in the current session
+---
+
+Show a snapshot of the current session: which Bee agents are active, and which immediate tasks are currently running.
+
+## Syntax
+
+```text
+/status     # Display active bees and running tasks in this session
+```
+
+`/status` takes no arguments.
+
+## Output
+
+```text
+Current session status:
+Active bees (2):
+  - DocBot   engine: claude   last active: 3m ago
+  - CodeBot   engine: codex   last active: 12s ago
+Running tasks (1):
+  - DocBot generate API reference doc…   running for 5m   exec: a1b2c3d4
+```
+
+### Active Bees
+
+Each line in the **Active bees** section shows:
+
+| Field | Description |
+|-------|-------------|
+| Name | Worker name |
+| `engine` | AI engine the worker is currently using |
+| `last active` | Time elapsed since the worker last updated its state |
+
+### Running Tasks
+
+Each line in the **Running tasks** section shows:
+
+| Field | Description |
+|-------|-------------|
+| Name | Worker name that owns the task |
+| Instruction | First 40 characters of the task instruction, whitespace normalized |
+| `running for` | Elapsed time since the task started |
+| `exec` | First 8 characters of the execution ID (useful for correlating logs) |
+
+Only **immediate tasks** (tasks triggered directly in chat) are listed here. Scheduled or background tasks do not appear.
+
+### Time Format
+
+Elapsed times use a compact notation:
+
+| Duration | Format | Example |
+|----------|--------|---------|
+| 0–59 seconds | `Xs` | `30s` |
+| 1–59 minutes | `Xm` | `5m` |
+| 1–23 hours | `Xh` | `12h` |
+| 24 hours or more | `Xd` | `2d` |
+
+### Empty State
+
+If no Bees are active or no tasks are running, the section still appears with a `(none)` placeholder:
+
+```text
+Current session status:
+Active bees (0):
+  (none)
+Running tasks (0):
+  (none)
+```
+
+## Error Responses
+
+| Situation | Response |
+|-----------|----------|
+| Could not look up session or task state | `⚠️ Failed to look up session status. Please retry; if this persists, check server logs.` |
+
+## When to Use `/status`
+
+- **Confirm a Bee is running** before sending follow-up messages to it.
+- **Check what's in flight** before issuing `/stop` or `/clear`.
+- **Identify a stuck task** — if a task has been running for an unexpectedly long time, use the `exec` ID to find it in server logs.
+- **Quick health check** when something feels off but you're not sure what's happening.
